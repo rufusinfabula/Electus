@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle ?? __('app_name')) ?> — <?= __('app_name') ?></title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/electus-32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/icons/electus-64.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/electus-180.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3/dist/css/uikit.min.css">
     <link rel="stylesheet" href="/assets/css/app.css">
     <?php

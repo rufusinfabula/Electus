@@ -1,10 +1,10 @@
 /* Electus — Custom styles over UIkit */
 
 :root {
-    --e-primary:    #4C3D9E;
-    --e-accent:     #7B68EE;
-    --e-bg:         #F8F7FF;
-    --e-text:       #1A1A2E;
+    --e-primary:    #2f6ad9;
+    --e-accent:     #60a5fa;
+    --e-bg:         #f5f8ff;
+    --e-text:       #0f172a;
     --e-sidebar-w:  240px;
     --e-navbar-h:   60px;
 }

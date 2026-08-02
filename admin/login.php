@@ -45,11 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= __('login_title') ?> — Electus</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/electus-32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/icons/electus-64.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/electus-180.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3/dist/css/uikit.min.css">
     <link rel="stylesheet" href="/assets/css/app.css">
     <style>
         body { background: var(--e-bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .e-login-box { background: #fff; border-radius: 16px; padding: 40px 48px; width: 100%; max-width: 420px; box-shadow: 0 4px 24px rgba(76,61,158,.1); border: 1px solid #ece9f5; }
+        .e-login-box { background: #fff; border-radius: 16px; padding: 40px 48px; width: 100%; max-width: 420px; box-shadow: 0 4px 24px rgba(47,106,217,.1); border: 1px solid #dce8fb; }
         .e-login-logo { text-align: center; margin-bottom: 32px; }
     </style>
 </head>

@@ -7,9 +7,18 @@ namespace Electus\Core;
 class Theme
 {
     // System-default preset key (can be overridden in config.php under 'theme' => ['default' => '...'])
-    public const DEFAULT_PRESET = 'saas';
+    public const DEFAULT_PRESET = 'electus';
 
     public const PALETTES = [
+        'electus' => [
+            'label'     => 'Electus (default)',
+            'primary'   => '#2f6ad9',
+            'secondary' => '#64748b',
+            'accent'    => '#60a5fa',
+            'bg'        => '#f5f8ff',
+            'text'      => '#0f172a',
+            'dark'      => false,
+        ],
         'institutional' => [
             'label'     => 'Istituzionale moderna',
             'primary'   => '#1D4ED8',

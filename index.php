@@ -135,8 +135,8 @@
             <span class="l-hero-brand-name">Electus</span>
         </div>
     </div>
-    <div class="l-hero-badge">Sistema di votazione professionale</div>
     <h1>Vota. Gestisci.<br>Pubblica i risultati.</h1>
+    <div class="l-hero-badge">Sistema di votazione professionale</div>
     <p>Electus è la piattaforma completa per elezioni, sondaggi e votazioni. Multi-turno, multi-modello, dalla registrazione degli elettori al risultato finale.</p>
     <div class="l-hero-actions">
         <a href="/richiedi-accesso.php" class="btn-primary">Richiedi accesso</a>

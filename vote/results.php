@@ -59,6 +59,21 @@ if ($roundId) {
     $round = $row ?: null;
 }
 
+// Auto-publish: pubblica risultati la cui schedulazione è scaduta.
+// NOW() presuppone che il server DB e PHP condividano lo stesso timezone
+// (Europe/Rome, come configurato in config.php).
+Database::get()->prepare(
+    "UPDATE event_rounds
+     SET results_released = 1, scheduled_release_at = NULL
+     WHERE results_released = 0
+       AND votes_validated = 1
+       AND scheduled_release_at IS NOT NULL
+       AND scheduled_release_at <= NOW()"
+)->execute();
+if ($round) {
+    $round = Round::find((int) $round['id']);
+}
+
 // Gate: results must be explicitly released
 if (!$round || !$round['results_released']) {
     $canVoteNow = $round && $round['status'] === 'active';

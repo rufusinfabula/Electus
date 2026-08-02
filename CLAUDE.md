@@ -171,7 +171,7 @@ Modelli: `Single`, `Multiple`, `Borda`, `Open`, `Proportional`, `Weighted`.
   Da implementare insieme o subito dopo la P2.1, condividono la stessa infrastruttura Mailer.
 - [ ] API pubblica risultati (JSON endpoint)
 - [ ] Dashboard analytics per evento
-- [ ] Scheduled publish risultati (data/ora automatica)
+- [x] Scheduled publish risultati (data/ora automatica)
 - [ ] Dedup automatica migliorata — logica similarità più robusta in `dedup.php`
 - [ ] Multi-round pipeline UI — visualizzazione relazioni tra turni e stato promozione
 

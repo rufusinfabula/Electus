@@ -62,6 +62,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Flash::success(__('results_unpublished'));
         })(),
 
+        'schedule_release' => (function () use ($roundId) {
+            $datetime = trim($_POST['scheduled_release_at'] ?? '');
+            if ($datetime === '') { Flash::error(__('error_prefix') . __('schedule_release_past_error')); return; }
+            $ts = strtotime($datetime);
+            if ($ts === false || $ts <= time()) { Flash::error(__('schedule_release_past_error')); return; }
+            Results::scheduleRelease($roundId, date('Y-m-d H:i:s', $ts));
+            Flash::success(__('schedule_release_ok'));
+        })(),
+
+        'cancel_schedule' => (function () use ($roundId) {
+            Results::cancelSchedule($roundId);
+            Flash::success(__('schedule_release_cancel'));
+        })(),
+
         'promote' => (function () use ($round, $roundId) {
             $toRoundId = (int) ($_POST['to_round_id'] ?? 0);
             if (!$toRoundId) { Flash::error(__('specify_round_count')); }
@@ -358,6 +372,35 @@ ob_start();
                 <span uk-icon="icon:world;ratio:.8"></span> <?= __('results_unpublish') ?>
             </button>
         </form>
+        <?php endif ?>
+
+        <?php if ($round['votes_validated'] && !$round['results_released']): ?>
+        <div style="width:1px;height:32px;background:#e8e4f0;margin:0 6px;flex-shrink:0"></div>
+        <?php if (!empty($round['scheduled_release_at'])): ?>
+        <div style="display:flex;align-items:center;gap:8px">
+            <span class="e-badge e-badge-draft">
+                <span uk-icon="icon:clock;ratio:.8"></span>
+                <?= str_replace(':datetime', htmlspecialchars(substr($round['scheduled_release_at'], 0, 16)), __('schedule_release_active')) ?>
+            </span>
+            <form method="post" style="margin:0">
+                <?= Csrf::field() ?>
+                <input type="hidden" name="_action" value="cancel_schedule">
+                <button class="uk-button uk-button-default uk-button-small" style="color:#e74c3c;border-color:#e74c3c">
+                    <span uk-icon="icon:close;ratio:.8"></span> <?= __('schedule_release_cancel') ?>
+                </button>
+            </form>
+        </div>
+        <?php else: ?>
+        <form method="post" style="margin:0;display:flex;gap:6px;align-items:center">
+            <?= Csrf::field() ?>
+            <input type="hidden" name="_action" value="schedule_release">
+            <span style="font-size:.78rem;color:#9a94b8;white-space:nowrap"><?= __('schedule_release_label') ?></span>
+            <input type="datetime-local" name="scheduled_release_at" class="uk-input uk-form-small" style="width:auto">
+            <button class="uk-button uk-button-default uk-button-small" style="color:var(--e-primary);border-color:var(--e-primary)">
+                <span uk-icon="icon:clock;ratio:.8"></span> <?= __('schedule_release_btn') ?>
+            </button>
+        </form>
+        <?php endif ?>
         <?php endif ?>
 
         <!-- Zona destra: promozione (separata da divisore verticale) -->

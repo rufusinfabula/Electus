@@ -114,6 +114,22 @@ class Results
         )->execute([$roundId]);
     }
 
+    public static function scheduleRelease(int $roundId, string $datetime): void
+    {
+        $pdo = Database::get();
+        $pdo->prepare(
+            'UPDATE event_rounds SET scheduled_release_at = ? WHERE id = ?'
+        )->execute([$datetime, $roundId]);
+    }
+
+    public static function cancelSchedule(int $roundId): void
+    {
+        $pdo = Database::get();
+        $pdo->prepare(
+            'UPDATE event_rounds SET scheduled_release_at = NULL WHERE id = ?'
+        )->execute([$roundId]);
+    }
+
     /** Total distinct voters for a round */
     public static function voterCount(int $roundId): int
     {

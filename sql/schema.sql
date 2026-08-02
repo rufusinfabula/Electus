@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS `event_rounds` (
   `validated_by`        INT UNSIGNED NULL,
   `validated_at`        DATETIME NULL,
   `results_released`    TINYINT(1) NOT NULL DEFAULT 0,
+  `scheduled_release_at` DATETIME NULL COMMENT 'Se impostato e votes_validated=1, pubblica automaticamente i risultati a questa data/ora',
   FOREIGN KEY (`event_id`)        REFERENCES `events`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`parent_round_id`) REFERENCES `event_rounds`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,8 +1,6 @@
 # Electus
 
-Sistema open source di gestione votazioni ed elezioni.
-
-🔗 **Demo live**: [electus.spazioumano.org](https://electus.spazioumano.org)
+* Sistema open source di gestione votazioni ed elezioni. *
 
 ## Cos'è
 

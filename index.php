@@ -266,18 +266,7 @@
 </div>
 
 <!-- Footer -->
-<footer class="l-footer">
-    <a href="/" class="l-footer-logo">
-        <div class="l-footer-logo-mark">
-            <img src="/icons/electus-64.png" alt="Electus">
-        </div>
-        <span style="font-weight:700;font-size:.95rem;color:var(--p)">Electus</span>
-    </a>
-    <p class="l-footer-text">
-        Sistema open source di gestione votazioni.<br>
-        &copy; <?= date('Y') ?> <a href="https://spazioumano.org">Spazio Umano</a> — <a href="/admin/">Area admin</a>
-    </p>
-</footer>
+<?php require __DIR__ . '/templates/_footer.php' ?>
 
 <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit.min.js"></script>
 </body>

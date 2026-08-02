@@ -126,11 +126,7 @@ if (!$round || !$round['results_released']) {
         </div>
     </div>
 </main>
-<footer class="e-public-footer">
-    <div class="uk-container">
-        Powered by <a href="https://electus.spazioumano.org" target="_blank" rel="noopener">Electus</a>
-    </div>
-</footer>
+<?php require ROOT . '/templates/_footer.php' ?>
 <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit-icons.min.js"></script>
 </body>
@@ -361,11 +357,7 @@ JS;
     </div>
 </main>
 
-<footer class="e-public-footer">
-    <div class="uk-container">
-        Powered by <a href="https://electus.spazioumano.org" target="_blank" rel="noopener">Electus</a>
-    </div>
-</footer>
+<?php require ROOT . '/templates/_footer.php' ?>
 
 <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit-icons.min.js"></script>

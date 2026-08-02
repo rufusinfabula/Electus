@@ -49,11 +49,7 @@
     </div>
 </main>
 
-<footer class="e-public-footer">
-    <div class="uk-container">
-        <p>Powered by <a href="https://github.com/rufusinfabula/electus" target="_blank" rel="noopener">Electus</a></p>
-    </div>
-</footer>
+<?php require ROOT . '/templates/_footer.php' ?>
 
 <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit-icons.min.js"></script>

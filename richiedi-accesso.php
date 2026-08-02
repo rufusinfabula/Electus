@@ -208,6 +208,7 @@ ob_start();
     </div>
 </div>
 
+<?php require ROOT . '/templates/_footer.php' ?>
 </body>
 </html>
 <?php

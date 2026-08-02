@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Recursive:wght@600&display=swap');
+
 /* Electus — Custom styles over UIkit */
 
 :root {
@@ -1286,4 +1288,71 @@
 }
 .ql-editor {
     min-height: 120px;
+}
+
+/* ── Footer comune ───────────────────────────────────────────────────────── */
+.e-footer {
+    border-top: 1px solid rgba(47,106,217,.12);
+    padding: 18px 24px;
+    text-align: center;
+    background: transparent;
+}
+
+.e-footer-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.e-footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.e-footer-logo-mark {
+    width: 22px;
+    height: 22px;
+    background: var(--e-primary);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.e-footer-logo-mark img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    display: block;
+}
+
+.e-footer-logo-name {
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--e-primary);
+    letter-spacing: .01em;
+}
+
+.e-footer-copy {
+    font-size: .78rem;
+    color: #8a9ab8;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.e-footer-divider {
+    color: #c8d0e0;
+    font-size: .78rem;
+}
+
+.e-footer-brand {
+    font-family: 'Recursive', cursive;
+    font-weight: 600;
+    color: var(--e-primary);
 }

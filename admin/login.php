@@ -125,5 +125,6 @@ $lockSecondsRemaining = $locked ? max(0, $lockedUntil - time()) : 0;
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit-icons.min.js"></script>
+    <?php require ROOT . '/templates/_footer.php' ?>
 </body>
 </html>

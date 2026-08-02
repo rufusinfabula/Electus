@@ -232,5 +232,6 @@ document.querySelectorAll('.e-quill-editor').forEach(function(container) {
 });
 </script>
 <?php endif ?>
+<?php require ROOT . '/templates/_footer.php' ?>
 </body>
 </html>

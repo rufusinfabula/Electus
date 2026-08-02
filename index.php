@@ -127,11 +127,13 @@
 
 <!-- Hero -->
 <section class="l-hero">
-    <div class="l-hero-brand">
-        <div class="l-hero-brand-icon">
-            <img src="/icons/electus-120.png" alt="Electus">
+    <div style="margin-bottom:32px">
+        <div class="l-hero-brand">
+            <div class="l-hero-brand-icon">
+                <img src="/icons/electus-120.png" alt="Electus">
+            </div>
+            <span class="l-hero-brand-name">Electus</span>
         </div>
-        <span class="l-hero-brand-name">Electus</span>
     </div>
     <div class="l-hero-badge">Sistema di votazione<br>professionale</div>
     <h1>Vota. Gestisci.<br>Pubblica i risultati.</h1>

@@ -88,6 +88,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if ($action === 'bulk_merge_high') {
+        $filterCategoryId = (int) ($_POST['category_id'] ?? 0);
+        $mergedGroups     = 0;
+        foreach (Deduplication::getPendingQueueGrouped($roundId) as $group) {
+            if ($filterCategoryId && (int) $group['category_id'] !== $filterCategoryId) continue;
+            if ((int) $group['max_score'] < 85 || !$group['suggested_candidate_id']) continue;
+
+            $items = [];
+            foreach ($group['items'] as $item) {
+                $items[] = ['queue_id' => (int) $item['id'], 'source_candidate_id' => (int) ($item['new_cand_id'] ?? 0)];
+            }
+            try {
+                Deduplication::mergeGroup($items, (int) $group['suggested_candidate_id'], $user['id']);
+                $mergedGroups++;
+            } catch (\Throwable $e) {
+                // Skip this group, keep processing the rest
+            }
+        }
+        if ($mergedGroups > 0) {
+            Flash::success(str_replace(':n', (string) $mergedGroups, __('dedup_bulk_merge_done')));
+        } else {
+            Flash::warning(__('dedup_bulk_merge_none'));
+        }
+    }
+
     if ($action === 'delete_alias') {
         $aliasId = (int) ($_POST['alias_id'] ?? 0);
         if ($aliasId) {
@@ -188,26 +213,74 @@ ob_start();
 </div>
 
 <?php
+$statsHigh   = 0;
+$statsMedium = 0;
+$statsLow    = 0;
+$highByCategory = [];
+foreach ($groups as $g) {
+    $score = (int) $g['max_score'];
+    if ($score >= 85) {
+        $statsHigh++;
+        $highByCategory[$g['category_id']] = ($highByCategory[$g['category_id']] ?? 0) + 1;
+    } elseif ($score >= 70) {
+        $statsMedium++;
+    } else {
+        $statsLow++;
+    }
+}
+?>
+<div class="uk-flex uk-flex-wrap" style="gap:8px;margin-bottom:20px">
+    <span class="uk-badge" style="background:#9a94b8"><?= count($groups) ?> <?= __('dedup_stats_pending') ?></span>
+    <span class="uk-badge" style="background:#e74c3c"><?= $statsHigh ?> <?= __('dedup_stats_high') ?></span>
+    <span class="uk-badge" style="background:#f39c12"><?= $statsMedium ?> <?= __('dedup_stats_medium') ?></span>
+    <span class="uk-badge" style="background:#9a94b8"><?= $statsLow ?> <?= __('dedup_stats_low') ?></span>
+</div>
+
+<?php
 $currentCat = null;
 foreach ($groups as $group):
     if ($group['category_id'] !== $currentCat):
         if ($currentCat !== null) echo '</div>';
         $currentCat = $group['category_id'];
 ?>
-<h3 style="font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--e-accent);margin:24px 0 8px">
-    <?= htmlspecialchars($group['category_name']) ?>
-</h3>
+<div class="uk-flex uk-flex-middle uk-flex-between" style="margin:24px 0 8px;flex-wrap:wrap;gap:8px">
+    <h3 style="font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--e-accent);margin:0">
+        <?= htmlspecialchars($group['category_name']) ?>
+    </h3>
+    <?php if (($highByCategory[$group['category_id']] ?? 0) > 0): ?>
+    <form method="post">
+        <?= Csrf::field() ?>
+        <input type="hidden" name="_action" value="bulk_merge_high">
+        <input type="hidden" name="category_id" value="<?= $group['category_id'] ?>">
+        <button class="uk-button uk-button-danger uk-button-small" type="submit"
+                data-confirm="<?= htmlspecialchars(__('dedup_bulk_merge_confirm')) ?>">
+            <span uk-icon="icon:bolt;ratio:.8"></span> <?= __('dedup_bulk_merge_high') ?>
+        </button>
+    </form>
+    <?php endif ?>
+</div>
 <div class="uk-grid-small" uk-grid>
 <?php endif ?>
 
+<?php
+    if ($group['max_score'] >= 85) {
+        [$confColor, $confLabel] = ['#e74c3c', __('dedup_high_similarity')];
+    } elseif ($group['max_score'] >= 70) {
+        [$confColor, $confLabel] = ['#f39c12', __('dedup_medium_similarity')];
+    } else {
+        [$confColor, $confLabel] = ['#9a94b8', __('dedup_low_similarity')];
+    }
+?>
 <div class="uk-width-1-1">
-<div class="e-card" style="border-left:4px solid <?= $group['max_score'] >= 85 ? '#e74c3c' : ($group['max_score'] >= 70 ? '#f39c12' : '#9a94b8') ?>">
+<div class="e-card" style="border-left:4px solid <?= $confColor ?>">
     <div class="uk-grid-small uk-flex-middle" uk-grid>
 
         <!-- Varianti -->
         <div class="uk-width-2-5@m">
             <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:#9a94b8;margin:0 0 8px">
                 <?= count($group['items']) ?> <?= __('dedup_variants') ?>
+                &nbsp;·&nbsp;
+                <span class="uk-badge" style="background:<?= $confColor ?>"><?= $confLabel ?></span>
             </p>
             <?php foreach ($group['items'] as $item): ?>
             <label style="display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:.875rem">

@@ -125,6 +125,17 @@ return [
     'dedup_browse_tab'      => 'Parcourir les candidats',
     'dedup_select_hint'     => 'Sélectionnez 2 candidats ou plus pour les fusionner. La barre de fusion apparaîtra en haut.',
     'dedup_intro'      => 'Ces noms pourraient être des doublons. Fusionnez-les pour éviter les votes divisés, conservez-les séparés s\'il s\'agit de personnes différentes, ou excluez-les des résultats.',
+    'dedup_high_similarity'   => 'Similarité élevée',
+    'dedup_medium_similarity' => 'Similarité moyenne',
+    'dedup_low_similarity'    => 'Similarité faible',
+    'dedup_bulk_merge_high'   => 'Fusionner toutes les similarités élevées',
+    'dedup_bulk_merge_confirm' => 'Fusionner automatiquement toutes les candidatures à forte similarité de cette catégorie ?',
+    'dedup_bulk_merge_done'   => ':n correspondances à forte similarité fusionnées automatiquement.',
+    'dedup_bulk_merge_none'   => 'Aucune correspondance à forte similarité à fusionner.',
+    'dedup_stats_pending'     => 'en attente',
+    'dedup_stats_high'        => 'similarité élevée',
+    'dedup_stats_medium'      => 'similarité moyenne',
+    'dedup_stats_low'         => 'similarité faible',
 
     // Results
     'results_title'          => 'Résultats',

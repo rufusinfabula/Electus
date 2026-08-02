@@ -125,6 +125,17 @@ return [
     'dedup_browse_tab'      => 'Browse candidates',
     'dedup_select_hint'     => 'Select 2 or more candidates to merge them. The merge bar will appear at the top.',
     'dedup_intro'        => 'These names might be duplicates. Merge them to avoid split votes, keep them separate if they are different people, or exclude them from results.',
+    'dedup_high_similarity'   => 'High similarity',
+    'dedup_medium_similarity' => 'Medium similarity',
+    'dedup_low_similarity'    => 'Low similarity',
+    'dedup_bulk_merge_high'   => 'Merge all high similarity',
+    'dedup_bulk_merge_confirm' => 'Automatically merge all high-similarity candidates in this category?',
+    'dedup_bulk_merge_done'   => 'Automatically merged :n high-similarity matches.',
+    'dedup_bulk_merge_none'   => 'No high-similarity matches to merge.',
+    'dedup_stats_pending'     => 'pending',
+    'dedup_stats_high'        => 'high similarity',
+    'dedup_stats_medium'      => 'medium similarity',
+    'dedup_stats_low'         => 'low similarity',
 
     // Results
     'results_title'          => 'Results',

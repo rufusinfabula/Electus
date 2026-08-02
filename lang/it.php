@@ -125,6 +125,17 @@ return [
     'dedup_browse_tab'      => 'Sfoglia candidati',
     'dedup_select_hint'     => 'Seleziona 2 o più candidati per unirli. La barra di fusione appare in cima.',
     'dedup_intro'      => 'Questi nomi potrebbero essere duplicati. Uniscili per evitare voti spezzati, mantienili separati se sono persone diverse, oppure escludili dai risultati.',
+    'dedup_high_similarity'   => 'Alta similarità',
+    'dedup_medium_similarity' => 'Media similarità',
+    'dedup_low_similarity'    => 'Bassa similarità',
+    'dedup_bulk_merge_high'   => 'Unisci tutti ad alta similarità',
+    'dedup_bulk_merge_confirm' => 'Unire automaticamente tutte le candidature ad alta similarità in questa categoria?',
+    'dedup_bulk_merge_done'   => 'Unite automaticamente :n corrispondenze ad alta similarità.',
+    'dedup_bulk_merge_none'   => 'Nessuna corrispondenza ad alta similarità da unire.',
+    'dedup_stats_pending'     => 'in attesa',
+    'dedup_stats_high'        => 'alta similarità',
+    'dedup_stats_medium'      => 'media similarità',
+    'dedup_stats_low'         => 'bassa similarità',
 
     // Results
     'results_title'          => 'Risultati',

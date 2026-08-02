@@ -11,6 +11,25 @@ class Deduplication
     // Minimum similarity % to flag a candidate as a potential duplicate
     private const THRESHOLD = 65;
 
+    // Short strings are noisier for similar_text/levenshtein (e.g. "LUCA" vs "LUIGI"),
+    // so names shorter than this require a much higher score before being queued.
+    private const SHORT_NAME_LEN       = 6;
+    private const SHORT_NAME_THRESHOLD = 90;
+
+    // Common Italian abbreviations, expanded before comparison so e.g. "S. FRANCESCO"
+    // and "SAN FRANCESCO" score as equivalent. Keys are post-normalize() tokens
+    // (punctuation already stripped, so "S." arrives here as "s").
+    private const ABBREVIATIONS = [
+        's'   => 'san',
+        'ss'  => 'santi',
+        'dr'  => 'dott',
+        'ass' => 'associazione',
+    ];
+
+    // Extra stopwords ignored when comparing, on top of Candidate::normalize()'s
+    // leading-article stripping.
+    private const EXTRA_STOPWORDS = ['dell', 'degli', 'delle', 'sulla', 'per', 'con'];
+
     /**
      * Called after a new user_input candidate is created in an open round.
      * Computes similarity against all existing active candidates in the same
@@ -39,7 +58,7 @@ class Deduplication
             }
         }
 
-        if ($bestScore >= self::THRESHOLD && $bestMatch) {
+        if ($bestMatch && $bestScore >= self::requiredThreshold($normalized, $bestMatch['canonical_name'])) {
             // Avoid duplicate queue entries for the same normalized input
             $stmt = $pdo->prepare(
                 'SELECT id FROM dedup_queue WHERE round_id = ? AND category_id = ? AND normalized_input = ? LIMIT 1'
@@ -59,30 +78,84 @@ class Deduplication
 
     /**
      * Combined similarity score (0–100).
+     * Compares local, comparison-only normalized forms (abbreviations expanded,
+     * extra stopwords dropped) — the stored canonical_name is untouched.
      * Checks prefix/substring containment first (catches "amnesty" vs
-     * "amnesty international"), then falls back to similar_text + levenshtein.
+     * "amnesty international"), then falls back to similar_text + levenshtein,
+     * with a soundex tiebreaker boost at the end.
      */
     public static function similarity(string $a, string $b): int
     {
-        if ($a === $b) return 100;
+        $pa = self::prepareForCompare($a);
+        $pb = self::prepareForCompare($b);
 
-        $short = mb_strlen($a) <= mb_strlen($b) ? $a : $b;
-        $long  = mb_strlen($a) <= mb_strlen($b) ? $b : $a;
+        if ($pa === $pb) return 100;
 
-        // One string is a prefix of the other → very likely duplicate
-        if (str_starts_with($long, $short)) return 85;
+        $short = mb_strlen($pa) <= mb_strlen($pb) ? $pa : $pb;
+        $long  = mb_strlen($pa) <= mb_strlen($pb) ? $pb : $pa;
 
-        // One string is contained inside the other
-        if (mb_strpos($long, $short) !== false) return 78;
+        if (str_starts_with($long, $short)) {
+            // One string is a prefix of the other → very likely duplicate
+            $score = 85;
+        } elseif (mb_strpos($long, $short) !== false) {
+            // One string is contained inside the other
+            $score = 78;
+        } else {
+            similar_text($pa, $pb, $stPct);
 
-        similar_text($a, $b, $stPct);
+            $maxLen   = max(mb_strlen($pa), mb_strlen($pb));
+            $levScore = $maxLen > 0
+                ? (int) round((1 - levenshtein(mb_substr($pa, 0, 255), mb_substr($pb, 0, 255)) / $maxLen) * 100)
+                : 100;
 
-        $maxLen   = max(mb_strlen($a), mb_strlen($b));
-        $levScore = $maxLen > 0
-            ? (int) round((1 - levenshtein(mb_substr($a, 0, 255), mb_substr($b, 0, 255)) / $maxLen) * 100)
-            : 100;
+            $score = (int) round(((float) $stPct + $levScore) / 2);
+        }
 
-        return (int) round(((float) $stPct + $levScore) / 2);
+        if (self::soundexMatches($pa, $pb)) {
+            $score = min(100, $score + 10);
+        }
+
+        return $score;
+    }
+
+    /**
+     * Minimum score required to flag a match, adapted to string length.
+     * Short names (e.g. "LUCA" vs "LUIGI") are noisier for similar_text/levenshtein,
+     * so they require a much higher score to avoid false positives.
+     */
+    private static function requiredThreshold(string $a, string $b): int
+    {
+        $minLen = min(mb_strlen($a), mb_strlen($b));
+        return $minLen > 0 && $minLen < self::SHORT_NAME_LEN
+            ? self::SHORT_NAME_THRESHOLD
+            : self::THRESHOLD;
+    }
+
+    /** Comparison-only normalization: abbreviation expansion + extra stopword removal. */
+    private static function prepareForCompare(string $s): string
+    {
+        $words = preg_split('/\s+/', trim($s), -1, PREG_SPLIT_NO_EMPTY);
+        $words = array_map(
+            fn(string $w) => self::ABBREVIATIONS[$w] ?? $w,
+            $words
+        );
+        $words = array_filter(
+            $words,
+            fn(string $w) => !in_array($w, self::EXTRA_STOPWORDS, true)
+        );
+
+        return implode(' ', $words);
+    }
+
+    /** True if both strings share the same soundex code (phonetic tiebreaker). */
+    private static function soundexMatches(string $a, string $b): bool
+    {
+        if ($a === '' || $b === '') return false;
+
+        $asciiA = iconv('UTF-8', 'ASCII//TRANSLIT', $a) ?: $a;
+        $asciiB = iconv('UTF-8', 'ASCII//TRANSLIT', $b) ?: $b;
+
+        return soundex($asciiA) === soundex($asciiB);
     }
 
     /**

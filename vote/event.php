@@ -30,6 +30,14 @@ if ($roundId) {
 $roundParam = $roundId ? '&round_id=' . $roundId : '';
 $errors = [];
 
+// If there's no open round, look for the most recent round with released results
+$resultsRound = null;
+if (!$round) {
+    foreach (array_reverse(Round::forEvent((int) $event['id'])) as $r) {
+        if (!empty($r['results_released'])) { $resultsRound = $r; break; }
+    }
+}
+
 // ── Handle registration POST ──────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Csrf::check();
@@ -124,20 +132,27 @@ ob_start();
 ?>
 <div style="max-width:520px;margin:0 auto">
 
-    <?php if (!empty($event['public_logo_url'])): ?>
-    <div class="e-public-logo-event">
-        <img src="<?= htmlspecialchars($event['public_logo_url']) ?>"
+    <div class="e-event-hero">
+        <?php if (!empty($event['public_logo_url'])): ?>
+        <img class="e-event-hero-logo" src="<?= htmlspecialchars($event['public_logo_url']) ?>"
              alt="<?= htmlspecialchars($event['name']) ?>">
+        <?php else: ?>
+        <span class="e-event-hero-mark">E</span>
+        <?php endif ?>
+
+        <h1 class="e-event-hero-title"><?= htmlspecialchars($event['name']) ?></h1>
+
+        <?php if ($round): ?>
+        <span class="e-event-hero-round">
+            <span uk-icon="icon:bolt;ratio:.8"></span>
+            <?= __('vote_round_label') ?><?php if (!empty($round['label'])): ?> — <?= htmlspecialchars($round['label']) ?><?php endif ?>
+        </span>
+        <?php endif ?>
+
+        <?php if (!empty($event['description'])): ?>
+        <div class="e-public-description e-event-hero-desc"><?= $event['description'] ?></div>
+        <?php endif ?>
     </div>
-    <?php endif ?>
-
-    <h1 style="font-size:1.6rem;font-weight:800;color:var(--e-text);margin-bottom:8px">
-        <?= htmlspecialchars($event['name']) ?>
-    </h1>
-
-    <?php if (!empty($event['description'])): ?>
-    <div class="e-public-description"><?= $event['description'] ?></div>
-    <?php endif ?>
 
     <?php if (!empty($event['public_info_box'])): ?>
     <div class="e-public-infobox uk-alert-primary" uk-alert>
@@ -157,8 +172,16 @@ ob_start();
     <?php endif ?>
 
     <?php if (!$round): ?>
-    <div class="uk-alert-warning" uk-alert>
-        <p><?= __('vote_closed') ?></p>
+    <div class="e-vote-box e-vote-box-form uk-text-center">
+        <span uk-icon="icon:lock;ratio:1.4" style="color:var(--e-accent);margin-bottom:12px"></span>
+        <p style="margin-bottom:<?= $resultsRound ? '16px' : '0' ?>"><?= __('vote_closed') ?></p>
+        <?php if ($resultsRound): ?>
+        <p class="e-vote-box-hint" style="margin-bottom:16px"><?= __('vote_results_available') ?></p>
+        <a href="/vote/results.php?slug=<?= urlencode($slug) ?>&round_id=<?= (int) $resultsRound['id'] ?>"
+           class="uk-button uk-button-primary">
+            <?= __('vote_see_results') ?> &rarr;
+        </a>
+        <?php endif ?>
     </div>
 
     <?php elseif ($accessMode === 'anonymous'): ?>
@@ -177,20 +200,22 @@ ob_start();
         <?php foreach ($errors as $e): ?><p><?= htmlspecialchars($e) ?></p><?php endforeach ?>
     </div>
     <?php endif ?>
-    <div class="e-vote-box">
+    <div class="e-vote-box e-vote-box-form">
         <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px"><?= __('vote_register') ?></h3>
         <form method="post">
             <?= Csrf::field() ?>
             <input type="hidden" name="_action" value="register">
             <div class="uk-margin">
-                <input class="uk-input" type="email" name="email"
+                <label for="ev-email-1"><?= __('vote_your_email') ?></label>
+                <input class="uk-input" id="ev-email-1" type="email" name="email"
                        placeholder="<?= __('vote_your_email') ?>" required>
             </div>
             <div class="uk-margin">
-                <input class="uk-input" type="text" name="name"
+                <label for="ev-name-1"><?= __('vote_your_name') ?></label>
+                <input class="uk-input" id="ev-name-1" type="text" name="name"
                        placeholder="<?= __('vote_your_name') ?>">
             </div>
-            <label class="uk-margin-small-bottom" style="display:block">
+            <label class="uk-margin-small-bottom" style="display:flex;align-items:center;gap:8px;font-weight:400">
                 <input type="checkbox" name="consent_marketing"> <?= __('vote_consent') ?>
             </label>
             <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-top">
@@ -212,20 +237,22 @@ ob_start();
         <?php foreach ($errors as $e): ?><p><?= htmlspecialchars($e) ?></p><?php endforeach ?>
     </div>
     <?php endif ?>
-    <div class="e-vote-box">
+    <div class="e-vote-box e-vote-box-form">
         <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px"><?= __('vote_register') ?></h3>
         <form method="post">
             <?= Csrf::field() ?>
             <input type="hidden" name="_action" value="register">
             <div class="uk-margin">
-                <input class="uk-input" type="email" name="email"
+                <label for="ev-email-2"><?= __('vote_your_email') ?></label>
+                <input class="uk-input" id="ev-email-2" type="email" name="email"
                        placeholder="<?= __('vote_your_email') ?>" required>
             </div>
             <div class="uk-margin">
-                <input class="uk-input" type="text" name="name"
+                <label for="ev-name-2"><?= __('vote_your_name') ?></label>
+                <input class="uk-input" id="ev-name-2" type="text" name="name"
                        placeholder="<?= __('vote_your_name') ?>">
             </div>
-            <label class="uk-margin-small-bottom" style="display:block">
+            <label class="uk-margin-small-bottom" style="display:flex;align-items:center;gap:8px;font-weight:400">
                 <input type="checkbox" name="consent_marketing"> <?= __('vote_consent') ?>
             </label>
             <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-top">
@@ -247,7 +274,7 @@ ob_start();
         <?php foreach ($errors as $e): ?><p><?= htmlspecialchars($e) ?></p><?php endforeach ?>
     </div>
     <?php endif ?>
-    <div class="e-vote-box">
+    <div class="e-vote-box e-vote-box-form">
         <h3 style="font-size:1rem;font-weight:600;margin-bottom:4px"><?= __('vote_register') ?></h3>
         <p style="color:#9a94b8;font-size:.875rem;margin-bottom:16px">
             Your request will be reviewed by the organiser. You will receive an email if approved.
@@ -256,11 +283,13 @@ ob_start();
             <?= Csrf::field() ?>
             <input type="hidden" name="_action" value="request_registration">
             <div class="uk-margin">
-                <input class="uk-input" type="email" name="email"
+                <label for="ev-email-3"><?= __('vote_your_email') ?></label>
+                <input class="uk-input" id="ev-email-3" type="email" name="email"
                        placeholder="<?= __('vote_your_email') ?>" required>
             </div>
             <div class="uk-margin">
-                <input class="uk-input" type="text" name="name"
+                <label for="ev-name-3"><?= __('vote_your_name') ?></label>
+                <input class="uk-input" id="ev-name-3" type="text" name="name"
                        placeholder="<?= __('vote_your_name') ?>">
             </div>
             <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-top">

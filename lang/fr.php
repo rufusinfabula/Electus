@@ -198,6 +198,11 @@ return [
     'vote_proceed'      => 'Passer au vote',
     'vote_open_hint'    => 'Saisissez le nom de votre candidat préféré.',
     'vote_verify_sent'  => 'Un lien de confirmation vous a été envoyé. Cliquez dessus pour débloquer votre vote.',
+    'vote_event_title'      => 'Bienvenue',
+    'vote_event_subtitle'   => 'Participez au vote ci-dessous.',
+    'vote_round_label'      => 'Tour en cours',
+    'vote_results_available'=> 'Le vote pour ce tour n\'est pas ouvert actuellement, mais les résultats sont disponibles.',
+    'vote_see_results'      => 'Voir les résultats',
 
     // Navigation extras
     'nav_overview'       => 'Vue d\'ensemble',

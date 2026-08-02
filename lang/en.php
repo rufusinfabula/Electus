@@ -198,6 +198,11 @@ return [
     'vote_proceed'       => 'Proceed to vote',
     'vote_open_hint'     => 'Type the name of your preferred candidate.',
     'vote_verify_sent'   => 'A confirmation link has been sent to your email. Please click it to unlock your vote.',
+    'vote_event_title'      => 'Welcome',
+    'vote_event_subtitle'   => 'Take part in the vote below.',
+    'vote_round_label'      => 'Current round',
+    'vote_results_available'=> 'Voting for this round is not currently open, but the results are available.',
+    'vote_see_results'      => 'See results',
 
     // Navigation extras
     'nav_overview'       => 'Overview',

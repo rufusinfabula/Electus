@@ -67,14 +67,22 @@ if ($token) {
         header('Location: /vote/event.php?slug=' . urlencode($event['slug']));
         exit;
     }
+
 }
 
-$round = Round::activeForEvent((int) $event['id']);
+$roundId = (int) ($_GET['round_id'] ?? $_POST['round_id'] ?? 0);
+if ($roundId) {
+    $round = Round::find($roundId);
+    if (!$round || (int) $round['event_id'] !== (int) $event['id']) $round = null;
+} else {
+    $round = Round::activeForEvent((int) $event['id']);
+}
 if (!$round) {
     Flash::warning(__('vote_closed'));
     header('Location: /vote/event.php?slug=' . urlencode($event['slug']));
     exit;
 }
+$roundParam = '&round_id=' . (int) $round['id'];
 
 $categories          = Category::forRound((int) $round['id']);
 $candidatesByCategory = [];
@@ -172,6 +180,7 @@ $__hasEmailVerif = (bool) $event['email_verification'];
     <input type="hidden" name="_token" value="<?= htmlspecialchars($token) ?>">
     <?php endif ?>
     <input type="hidden" name="event" value="<?= htmlspecialchars($event['slug']) ?>">
+    <input type="hidden" name="round_id" value="<?= (int) $round['id'] ?>">
 
     <?= $model->renderForm($round, $categories, $candidatesByCategory) ?>
 

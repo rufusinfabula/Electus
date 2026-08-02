@@ -154,45 +154,78 @@ class Results
     }
 
     /**
-     * Promotes the top N candidates from a round to the next round,
-     * setting the next round's candidates' source = 'promoted'.
-     * Requires promotion_confirmed to be 0 (runs once).
+     * Promotes candidates from a round to the next round using per-category
+     * settings from round_category_map (advancement_mode + advancement_count).
+     * Modes: auto = top N, all = every active candidate, none/manual = skip.
+     * Runs once (promotion_confirmed guard).
      */
-    public static function promote(int $fromRoundId, int $toRoundId, int $topN): void
+    public static function promote(int $fromRoundId, int $toRoundId): void
     {
         $pdo = Database::get();
         $pdo->beginTransaction();
         try {
-            // Check not already promoted
             $stmt = $pdo->prepare('SELECT promotion_confirmed FROM event_rounds WHERE id = ?');
             $stmt->execute([$fromRoundId]);
             if ((int) $stmt->fetchColumn() === 1) {
                 throw new \RuntimeException('Promotion already confirmed for this round.');
             }
 
-            // Find top N candidates per category
+            // Load per-category advancement settings
             $stmt = $pdo->prepare(
-                'SELECT r.candidate_id, r.category_id
-                 FROM results r
-                 WHERE r.round_id = ? AND r.rank <= ?
-                 ORDER BY r.category_id, r.rank'
+                'SELECT category_id, advancement_mode, advancement_count, next_category_id
+                 FROM round_category_map WHERE round_id = ?'
             );
-            $stmt->execute([$fromRoundId, $topN]);
-            $topCandidates = $stmt->fetchAll();
-
-            if (empty($topCandidates)) {
-                throw new \RuntimeException('No results computed — run Compute first.');
+            $stmt->execute([$fromRoundId]);
+            $catMap = [];
+            foreach ($stmt->fetchAll() as $row) {
+                $catMap[$row['category_id']] = $row;
             }
 
-            // Fetch source candidate data
+            if (empty($catMap)) {
+                throw new \RuntimeException('No category map configured for this round.');
+            }
+
             $ins = $pdo->prepare(
                 "INSERT INTO candidates
                  (round_id, category_id, name, canonical_name, source, status)
-                 SELECT ?, category_id, name, canonical_name, 'promoted', 'active'
+                 SELECT ?, ?, name, canonical_name, 'promoted', 'active'
                  FROM candidates WHERE id = ?"
             );
-            foreach ($topCandidates as $row) {
-                $ins->execute([$toRoundId, $row['candidate_id']]);
+
+            $promoted = 0;
+            foreach ($catMap as $catId => $cfg) {
+                $mode  = $cfg['advancement_mode'] ?? 'manual';
+                $count = (int) ($cfg['advancement_count'] ?? 0);
+                $destCatId = (int) ($cfg['next_category_id'] ?? 0) ?: $catId;
+
+                if ($mode === 'none' || $mode === 'manual') continue;
+
+                if ($mode === 'all') {
+                    $stmt = $pdo->prepare(
+                        "SELECT r.candidate_id FROM results r
+                         WHERE r.round_id = ? AND r.category_id = ?
+                         ORDER BY r.rank"
+                    );
+                    $stmt->execute([$fromRoundId, $catId]);
+                } else {
+                    // auto: top N
+                    if ($count < 1) continue;
+                    $stmt = $pdo->prepare(
+                        "SELECT r.candidate_id FROM results r
+                         WHERE r.round_id = ? AND r.category_id = ? AND r.rank <= ?
+                         ORDER BY r.rank"
+                    );
+                    $stmt->execute([$fromRoundId, $catId, $count]);
+                }
+
+                foreach ($stmt->fetchAll() as $row) {
+                    $ins->execute([$toRoundId, $destCatId, $row['candidate_id']]);
+                    $promoted++;
+                }
+            }
+
+            if ($promoted === 0) {
+                throw new \RuntimeException('No results found — run Compute first.');
             }
 
             $pdo->prepare(

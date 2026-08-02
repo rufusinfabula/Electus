@@ -64,11 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         'promote' => (function () use ($round, $roundId) {
             $toRoundId = (int) ($_POST['to_round_id'] ?? 0);
-            $topN      = (int) ($round['top_n_to_promote'] ?? 0);
-            if (!$toRoundId || !$topN) { Flash::error(__('specify_round_count')); }
+            if (!$toRoundId) { Flash::error(__('specify_round_count')); }
             elseif (!$round['votes_validated']) { Flash::error(__('results_not_validated')); }
             else {
-                try { Results::promote($roundId, $toRoundId, $topN); Flash::success(__('candidates_promoted')); }
+                try { Results::promote($roundId, $toRoundId); Flash::success(__('candidates_promoted')); }
                 catch (\Throwable $e) { Flash::error(__('error_prefix') . $e->getMessage()); }
             }
         })(),
@@ -175,6 +174,17 @@ foreach ($allCandidates as $c) { $candByCategory[$c['category_id']][] = $c; }
 
 $pendingCount = count($dedupGroups);
 
+// Check if any category has automatic advancement configured
+$stmtCat = Database::get()->prepare(
+    "SELECT COUNT(*) FROM round_category_map
+     WHERE round_id = ? AND advancement_mode IN ('auto','all')
+     AND (advancement_mode = 'all' OR (advancement_mode = 'auto' AND advancement_count > 0))"
+);
+$stmtCat->execute([$roundId]);
+$hasCatPromotion = (int) $stmtCat->fetchColumn() > 0;
+
+$appUrl           = rtrim($config['app']['url'] ?? '', '/');
+$resultsPublicUrl = $appUrl . '/vote/results.php?slug=' . urlencode($event['slug']) . '&round_id=' . $roundId;
 $catTermS       = CatTerm::label($event, 's');
 $catTermP       = CatTerm::label($event, 'p');
 $pageTitle      = __('results_title') . ' — ' . __('round_number') . $round['round_number'];
@@ -246,7 +256,25 @@ ob_start();
             <span class="e-badge e-badge-draft"><?= __('votes_not_validated') ?></span>
             <?php endif ?>
             <?php if ($round['results_released']): ?>
-            <span class="e-badge e-badge-active">&#127758; <?= __('results_public_badge') ?></span>
+            <div style="display:flex;flex-direction:column;gap:6px">
+                <span class="e-badge e-badge-active">&#127758; <?= __('results_public_badge') ?></span>
+                <div style="display:flex;align-items:center;gap:6px">
+                    <code style="font-size:.72rem;color:#166534;background:#f0fdf4;padding:3px 7px;border-radius:4px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                        <?= htmlspecialchars($resultsPublicUrl) ?>
+                    </code>
+                    <button type="button"
+                            onclick="navigator.clipboard.writeText('<?= htmlspecialchars($resultsPublicUrl, ENT_QUOTES) ?>')"
+                            class="uk-button uk-button-default uk-button-small"
+                            title="Copia link" style="padding:0 6px">
+                        <span uk-icon="icon:copy;ratio:.8"></span>
+                    </button>
+                    <a href="<?= htmlspecialchars($resultsPublicUrl) ?>" target="_blank"
+                       class="uk-button uk-button-default uk-button-small"
+                       title="Apri pagina pubblica" style="padding:0 6px">
+                        <span uk-icon="icon:forward;ratio:.8"></span>
+                    </a>
+                </div>
+            </div>
             <?php else: ?>
             <span class="e-badge e-badge-closed"><?= __('results_not_public') ?></span>
             <?php endif ?>
@@ -277,7 +305,9 @@ ob_start();
 
 <!-- Action toolbar -->
 <div class="e-card uk-margin-bottom" style="padding:14px 20px">
-    <div class="uk-flex uk-flex-wrap" style="gap:10px;align-items:center">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+
+        <!-- Zona sinistra: Compute / Validate / Publish -->
         <form method="post" style="margin:0">
             <?= Csrf::field() ?>
             <input type="hidden" name="_action" value="compute">
@@ -300,9 +330,10 @@ ob_start();
         <form method="post" style="margin:0">
             <?= Csrf::field() ?>
             <input type="hidden" name="_action" value="unvalidate">
-            <button class="uk-button uk-button-link uk-button-small" style="color:#e74c3c"
+            <button class="uk-button uk-button-default uk-button-small"
+                    style="color:#e74c3c;border-color:#e74c3c"
                     data-confirm="<?= htmlspecialchars(__('unvalidate_confirm')) ?>">
-                <?= __('votes_unvalidate') ?>
+                <span uk-icon="icon:close;ratio:.8"></span> <?= __('votes_unvalidate') ?>
             </button>
         </form>
         <?php endif ?>
@@ -321,17 +352,35 @@ ob_start();
         <form method="post" style="margin:0">
             <?= Csrf::field() ?>
             <input type="hidden" name="_action" value="unpublish">
-            <button class="uk-button uk-button-link uk-button-small" style="color:#e74c3c"
+            <button class="uk-button uk-button-default uk-button-small"
+                    style="color:#e74c3c;border-color:#e74c3c"
                     data-confirm="<?= htmlspecialchars(__('hide_from_public_confirm')) ?>">
-                <?= __('results_unpublish') ?>
+                <span uk-icon="icon:world;ratio:.8"></span> <?= __('results_unpublish') ?>
             </button>
         </form>
         <?php endif ?>
 
-        <?php if ($round['top_n_to_promote'] && !$round['promotion_confirmed'] && !empty($laterRounds)): ?>
+        <!-- Zona destra: promozione (separata da divisore verticale) -->
+        <?php if ($hasCatPromotion && !$round['promotion_confirmed'] && !empty($laterRounds)): ?>
+        <div style="width:1px;height:32px;background:#e8e4f0;margin:0 6px;flex-shrink:0"></div>
+        <?php if (count($laterRounds) === 1):
+            $onlyRound = reset($laterRounds); ?>
+        <form method="post" style="margin:0">
+            <?= Csrf::field() ?>
+            <input type="hidden" name="_action" value="promote">
+            <input type="hidden" name="to_round_id" value="<?= $onlyRound['id'] ?>">
+            <button class="uk-button uk-button-primary uk-button-small"
+                    <?= !$round['votes_validated'] ? 'disabled' : '' ?>
+                    data-confirm="<?= htmlspecialchars(__('promote_confirm')) ?>">
+                <span uk-icon="icon:push;ratio:.8"></span>
+                <?= __('promote_btn') ?> — <?= __('round_number') ?><?= $onlyRound['round_number'] ?><?= $onlyRound['label'] ? ' — ' . htmlspecialchars($onlyRound['label']) : '' ?>
+            </button>
+        </form>
+        <?php else: ?>
         <form method="post" style="margin:0;display:flex;gap:6px;align-items:center">
             <?= Csrf::field() ?>
             <input type="hidden" name="_action" value="promote">
+            <span style="font-size:.78rem;color:#9a94b8;white-space:nowrap"><?= __('promote_to_label') ?></span>
             <select name="to_round_id" class="uk-select uk-form-small" style="width:auto">
                 <?php foreach ($laterRounds as $lr): ?>
                 <option value="<?= $lr['id'] ?>">
@@ -339,16 +388,20 @@ ob_start();
                 </option>
                 <?php endforeach ?>
             </select>
-            <button class="uk-button uk-button-default uk-button-small"
+            <button class="uk-button uk-button-primary uk-button-small"
                     <?= !$round['votes_validated'] ? 'disabled' : '' ?>
-                    data-confirm="<?= htmlspecialchars(str_replace(':n', (string)(int)$round['top_n_to_promote'], __('promote_confirm'))) ?>">
+                    data-confirm="<?= htmlspecialchars(__('promote_confirm')) ?>">
                 <span uk-icon="icon:push;ratio:.8"></span>
-                <?= str_replace(':n', (string)(int)$round['top_n_to_promote'], __('promote_btn')) ?>
+                <?= __('promote_btn') ?>
             </button>
         </form>
+        <?php endif ?>
+
         <?php elseif ($round['promotion_confirmed']): ?>
+        <div style="width:1px;height:32px;background:#e8e4f0;margin:0 6px;flex-shrink:0"></div>
         <span style="font-size:.8rem;color:#27ae60">&#10003; <?= __('promote_confirmed_msg') ?></span>
         <?php endif ?>
+
     </div>
 </div>
 

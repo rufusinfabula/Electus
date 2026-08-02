@@ -387,6 +387,40 @@ ob_start();
     </div>
     <?php endif ?>
 
+    <!-- Per-round voting link -->
+    <?php
+    $roundVoteUrl = $appUrl . '/vote/event.php?slug=' . urlencode($event['slug']) . '&round_id=' . $round['id'];
+    $isRoundLive  = $round['status'] === 'active' && $event['status'] === 'active' && $dateWarn === '';
+    ?>
+    <div style="display:flex;align-items:center;gap:8px;margin:10px 0 4px;padding:7px 10px;
+                background:<?= $isRoundLive ? '#f0fdf4' : '#f8f7fc' ?>;
+                border-radius:7px;font-size:.75rem;flex-wrap:wrap">
+        <?php if ($isRoundLive): ?>
+        <span style="width:7px;height:7px;border-radius:50%;background:#1a7a3c;flex-shrink:0;animation:e-pulse 1.4s ease-in-out infinite"></span>
+        <?php else: ?>
+        <span uk-icon="icon:link;ratio:.7" style="color:#9a94b8;flex-shrink:0"></span>
+        <?php endif ?>
+        <code style="font-size:.72rem;color:<?= $isRoundLive ? '#166534' : '#6b6494' ?>;
+                     background:transparent;flex:1;min-width:0;
+                     overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+            <?= htmlspecialchars($roundVoteUrl) ?>
+        </code>
+        <div style="display:flex;gap:4px;flex-shrink:0">
+            <button type="button"
+                    onclick="navigator.clipboard.writeText('<?= htmlspecialchars($roundVoteUrl, ENT_QUOTES) ?>');
+                             var b=this;b.innerHTML='&#10003;';setTimeout(()=>b.innerHTML='<span uk-icon=\'icon:copy;ratio:.7\'></span>',1600)"
+                    class="uk-button uk-button-default uk-button-small"
+                    style="padding:0 6px;min-height:26px;line-height:26px">
+                <span uk-icon="icon:copy;ratio:.7"></span>
+            </button>
+            <a href="<?= htmlspecialchars($roundVoteUrl) ?>" target="_blank"
+               class="uk-button uk-button-default uk-button-small"
+               style="padding:0 6px;min-height:26px;line-height:26px">
+                <span uk-icon="icon:forward;ratio:.7"></span>
+            </a>
+        </div>
+    </div>
+
     <!-- Actions -->
     <div class="e-round-actions">
         <!-- Primary contextual action -->

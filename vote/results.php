@@ -18,7 +18,6 @@ if (!file_exists(ROOT . '/config/config.php')) {
     exit;
 }
 $cfg = require ROOT . '/config/config.php';
-Database::init($cfg['db']['host'], $cfg['db']['name'], $cfg['db']['user'], $cfg['db']['pass'], $cfg['db']['port'] ?? 3306);
 
 // Language
 session_start();

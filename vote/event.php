@@ -19,7 +19,15 @@ if (!$event || $event['status'] !== 'active') {
     die('Event not found or not active.');
 }
 
-$round = Round::activeForEvent((int) $event['id']);
+$roundId = (int) ($_GET['round_id'] ?? 0);
+if ($roundId) {
+    $round = Round::find($roundId);
+    if (!$round || (int) $round['event_id'] !== (int) $event['id']) { $round = null; $roundId = 0; }
+} else {
+    $round = Round::activeForEvent((int) $event['id']);
+    if ($round) $roundId = (int) $round['id'];
+}
+$roundParam = $roundId ? '&round_id=' . $roundId : '';
 $errors = [];
 
 // ── Handle registration POST ──────────────────────────────────────────────────
@@ -43,10 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $errors[] = __('vote_already_voted');
                 } elseif ($event['email_verification'] && !$existing['approved']) {
                     Flash::warning(__('vote_verify_sent'));
-                    header('Location: /vote/event.php?slug=' . urlencode($slug));
+                    header('Location: /vote/event.php?slug=' . urlencode($slug) . $roundParam);
                     exit;
                 } else {
-                    header('Location: /vote/cast.php?token=' . urlencode($existing['token']));
+                    header('Location: /vote/cast.php?token=' . urlencode($existing['token']) . $roundParam);
                     exit;
                 }
             } else {
@@ -63,10 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Mailer::send($email, $name, $subject, $body);
                     VoterList::markInvited($result['id']);
                     Flash::success(__('vote_verify_sent'));
-                    header('Location: /vote/event.php?slug=' . urlencode($slug));
+                    header('Location: /vote/event.php?slug=' . urlencode($slug) . $roundParam);
                     exit;
                 } else {
-                    header('Location: /vote/cast.php?token=' . urlencode($result['token']));
+                    header('Location: /vote/cast.php?token=' . urlencode($result['token']) . $roundParam);
                     exit;
                 }
             }
@@ -103,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$event['id'], $name, $email]);
                 Flash::success('Your registration request has been submitted. You will receive an email when approved.');
             }
-            header('Location: /vote/event.php?slug=' . urlencode($slug));
+            header('Location: /vote/event.php?slug=' . urlencode($slug) . $roundParam);
             exit;
         }
     }
@@ -156,7 +164,7 @@ ob_start();
     <?php elseif ($accessMode === 'anonymous'): ?>
     <!-- Anonymous: go straight to cast -->
     <div style="text-align:center;padding:16px 0">
-        <a href="/vote/cast.php?event=<?= urlencode($slug) ?>"
+        <a href="/vote/cast.php?event=<?= urlencode($slug) . htmlspecialchars($roundParam) ?>"
            class="uk-button uk-button-primary uk-button-large">
             <?= __('vote_proceed') ?> &rarr;
         </a>
@@ -191,7 +199,7 @@ ob_start();
         </form>
     </div>
     <div style="text-align:center;margin-top:16px">
-        <a href="/vote/cast.php?event=<?= urlencode($slug) ?>"
+        <a href="/vote/cast.php?event=<?= urlencode($slug) . htmlspecialchars($roundParam) ?>"
            style="color:#9a94b8;font-size:.875rem">
             Vote without registering
         </a>

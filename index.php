@@ -168,7 +168,7 @@
                 <svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
             </div>
             <h3>Risultati in tempo reale</h3>
-            <p>Calcola, valida e pubblica i risultati. Esporta in CSV o JSON. Grafici a barre per ogni categoria con link pubblico direttamente condivisibile.</p>
+            <p>Calcola, valida e pubblica i risultati. Esporta in CSV o JSON. Grafici a barre per ogni categoria con link pubblico direttamente condivisibile. API JSON pubblica per integrazioni esterne (dashboard, siti cliente).</p>
         </div>
         <div class="l-feat">
             <div class="l-feat-icon">

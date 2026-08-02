@@ -42,7 +42,7 @@
 
         /* ── HERO ── */
         .l-hero { background: linear-gradient(135deg, var(--p) 0%, var(--p-dark) 100%); padding: 96px 24px 80px; text-align: center; }
-        .l-hero-badge { display: inline-block; background: rgba(255,255,255,.18); color: #fff; border-radius: 99px; padding: 5px 16px; font-size: .8rem; font-weight: 600; letter-spacing: .04em; margin-bottom: 28px; }
+        .l-hero-badge { display: inline-block; background: rgba(255,255,255,.18); color: #fff; border-radius: 99px; padding: 5px 16px; font-size: .8rem; font-weight: 600; letter-spacing: .04em; margin-bottom: 32px; white-space: nowrap; }
         .l-hero h1 { color: #fff; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; margin: 0 0 20px; letter-spacing: -.02em; line-height: 1.15; }
         .l-hero p { color: rgba(255,255,255,.82); font-size: 1.15rem; max-width: 540px; margin: 0 auto 40px; line-height: 1.6; }
         .l-hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
@@ -127,7 +127,7 @@
 
 <!-- Hero -->
 <section class="l-hero">
-    <div style="margin-bottom:32px">
+    <div style="margin-bottom:10px">
         <div class="l-hero-brand">
             <div class="l-hero-brand-icon">
                 <img src="/icons/electus-120.png" alt="Electus">
@@ -135,7 +135,7 @@
             <span class="l-hero-brand-name">Electus</span>
         </div>
     </div>
-    <div class="l-hero-badge">Sistema di votazione<br>professionale</div>
+    <div class="l-hero-badge">Sistema di votazione professionale</div>
     <h1>Vota. Gestisci.<br>Pubblica i risultati.</h1>
     <p>Electus è la piattaforma completa per elezioni, sondaggi e votazioni. Multi-turno, multi-modello, dalla registrazione degli elettori al risultato finale.</p>
     <div class="l-hero-actions">

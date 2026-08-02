@@ -20,6 +20,18 @@ Auth::requireEventPermission($eventId);
 
 $pdo = Database::get();
 
+// CSV template download
+if (($_GET['export'] ?? '') === 'csv_template') {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="voters_template.csv"');
+    $out = fopen('php://output', 'w');
+    fputcsv($out, ['email', 'nome']);
+    fputcsv($out, ['mario.rossi@example.com', 'Mario Rossi']);
+    fputcsv($out, ['anna.bianchi@example.com', 'Anna Bianchi']);
+    fclose($out);
+    exit;
+}
+
 // POST actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Csrf::check();
@@ -71,6 +83,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 "UPDATE voter_registration_requests SET status = 'rejected', reviewed_at = NOW(), reviewed_by = ? WHERE id = ? AND event_id = ?"
             )->execute([(int) Auth::currentUser()['id'], $reqId, $eventId]);
             Flash::success(__('voter_request_rejected'));
+        }
+    }
+
+    if ($action === 'import_csv' && Auth::hasRole('superadmin', 'event_manager')) {
+        $overwrite = !empty($_POST['overwrite']);
+        $file      = $_FILES['csv_file'] ?? null;
+
+        if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
+            Flash::error(__('import_csv_error_upload'));
+        } elseif ($file['size'] > 2 * 1024 * 1024) {
+            Flash::error(__('import_csv_error_size'));
+        } else {
+            $handle = fopen($file['tmp_name'], 'r');
+            $bom    = fread($handle, 3);
+            if ($bom !== "\xEF\xBB\xBF") { rewind($handle); }
+
+            $imported = 0;
+            $updated  = 0;
+            $skipped  = 0;
+            $errors   = 0;
+            $first    = true;
+
+            $stmtFind   = $pdo->prepare('SELECT id, name FROM voter_lists WHERE event_id = ? AND email = ?');
+            $stmtInsert = $pdo->prepare(
+                "INSERT INTO voter_lists (event_id, email, name, token, source, approved)
+                 VALUES (?, ?, ?, ?, 'preloaded', 1)"
+            );
+            $stmtUpdate = $pdo->prepare('UPDATE voter_lists SET name = ? WHERE id = ?');
+
+            while (($row = fgetcsv($handle)) !== false) {
+                if ($row === [null] || $row === false) { continue; }
+
+                $email = strtolower(trim($row[0] ?? ''));
+                $name  = trim($row[1] ?? '');
+
+                if ($first) {
+                    $first = false;
+                    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { continue; } // riga header
+                }
+
+                if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    if ($email !== '') { $errors++; }
+                    continue;
+                }
+
+                $stmtFind->execute([$eventId, $email]);
+                $existing = $stmtFind->fetch();
+
+                if (!$existing) {
+                    $token   = bin2hex(random_bytes(32));
+                    $inserted = false;
+                    for ($attempt = 0; $attempt < 3 && !$inserted; $attempt++) {
+                        try {
+                            $stmtInsert->execute([$eventId, $email, $name !== '' ? $name : null, $token]);
+                            $inserted = true;
+                            $imported++;
+                        } catch (\PDOException $e) {
+                            if ($e->getCode() === '23000' && $attempt < 2) {
+                                $token = bin2hex(random_bytes(32));
+                                continue;
+                            }
+                            $errors++;
+                            break;
+                        }
+                    }
+                } elseif ($overwrite) {
+                    if ($name !== '' && $name !== $existing['name']) {
+                        $stmtUpdate->execute([$name, $existing['id']]);
+                    }
+                    $updated++;
+                } else {
+                    $skipped++;
+                }
+            }
+            fclose($handle);
+
+            Flash::success(__('import_ok', [
+                ':imported' => (string) $imported,
+                ':updated'  => (string) $updated,
+                ':skipped'  => (string) $skipped,
+                ':errors'   => (string) $errors,
+            ]));
         }
     }
 
@@ -127,6 +221,11 @@ ob_start();
             <h1 class="e-page-title uk-margin-remove"><?= __('voters_title') ?></h1>
         </div>
     </div>
+    <?php if (Auth::hasRole('superadmin', 'event_manager')): ?>
+    <a href="#modal-import-csv" uk-toggle class="uk-button uk-button-primary uk-button-small">
+        <span uk-icon="icon:upload;ratio:.8"></span> <?= __('voters_import') ?>
+    </a>
+    <?php endif ?>
 </div>
 
 <!-- Stats -->
@@ -303,6 +402,33 @@ ob_start();
             <?php endforeach ?>
         </tbody>
     </table>
+</div>
+<?php endif ?>
+
+<?php if (Auth::hasRole('superadmin', 'event_manager')): ?>
+<div id="modal-import-csv" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h3 class="uk-modal-title" style="font-size:1rem"><?= __('import_csv_title') ?></h3>
+        <form method="post" enctype="multipart/form-data">
+            <?= Csrf::field() ?>
+            <input type="hidden" name="_action" value="import_csv">
+            <div class="uk-margin">
+                <input class="uk-input" type="file" name="csv_file" accept=".csv,text/csv" required>
+            </div>
+            <div class="uk-margin">
+                <label><input class="uk-checkbox" type="checkbox" name="overwrite" value="1"> <?= __('import_csv_overwrite') ?></label>
+            </div>
+            <p style="color:#9a94b8;font-size:.8rem">
+                <?= __('import_csv_format_hint') ?><br>
+                <a href="?event_id=<?= $eventId ?>&export=csv_template"><?= __('csv_template_download') ?></a>
+            </p>
+            <div class="uk-flex uk-flex-right" style="gap:8px">
+                <button type="button" class="uk-button uk-button-default uk-modal-close"><?= __('cancel') ?></button>
+                <button type="submit" class="uk-button uk-button-primary"><?= __('import_csv_submit') ?></button>
+            </div>
+        </form>
+    </div>
 </div>
 <?php endif ?>
 

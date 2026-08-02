@@ -23,22 +23,45 @@ if (Auth::isLoggedIn()) {
     exit;
 }
 
-$error = '';
+// Rate limiting login per sessione: nessuna colonna di lock su `users`, nessun
+// servizio esterno. Limite noto: è per sessione, non per IP/account globale
+// (una finestra in incognito azzera il contatore) — accettabile per scoraggiare
+// solo attacchi automatici di base.
+const LOGIN_MAX_ATTEMPTS = 5;
+const LOGIN_LOCKOUT_SECONDS = 300;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$error = '';
+$lockedUntil = $_SESSION['login_locked_until'] ?? 0;
+$locked = $lockedUntil > time();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$locked) {
     Csrf::check();
     $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
     if (Auth::login($email, $password)) {
+        unset($_SESSION['login_attempts'], $_SESSION['login_locked_until'], $_SESSION['login_attempt_email']);
         $user = Auth::currentUser();
         Flash::success(__('welcome_back', ['name' => $user['name']]));
         header('Location: /admin/');
         exit;
     }
 
+    $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
+    $_SESSION['login_attempt_email'] = $email;
+
+    if ($_SESSION['login_attempts'] >= LOGIN_MAX_ATTEMPTS) {
+        $_SESSION['login_locked_until'] = time() + LOGIN_LOCKOUT_SECONDS;
+        $_SESSION['login_attempts'] = 0;
+        $lockedUntil = $_SESSION['login_locked_until'];
+        $locked = true;
+        error_log('Electus login lockout: ' . $email . ' from ' . $_SERVER['REMOTE_ADDR']);
+    }
+
     $error = __('invalid_credentials');
 }
+
+$lockSecondsRemaining = $locked ? max(0, $lockedUntil - time()) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="<?= \Electus\Core\Lang::current() ?>">
@@ -87,11 +110,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
             <div class="uk-margin-top">
-                <button class="uk-button uk-button-primary uk-width-1-1" type="submit">
+                <button class="uk-button uk-button-primary uk-width-1-1" type="submit"<?= $locked ? ' disabled' : '' ?>>
                     <?= __('login') ?>
                 </button>
             </div>
         </form>
+
+        <?php if ($locked): ?>
+        <div class="uk-alert-warning uk-margin-top" uk-alert>
+            <p><?= htmlspecialchars(__('login_too_many_attempts', ['seconds' => (string) $lockSecondsRemaining])) ?></p>
+        </div>
+        <?php endif ?>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit.min.js"></script>

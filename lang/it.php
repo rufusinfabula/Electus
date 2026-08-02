@@ -26,6 +26,7 @@ return [
     'password'           => 'Password',
     'login_title'        => 'Accesso admin',
     'invalid_credentials'=> 'Email o password non validi.',
+    'login_too_many_attempts' => 'Troppi tentativi. Riprova tra :seconds secondi.',
     'welcome_back'       => 'Bentornato, :name.',
 
     // Navigation

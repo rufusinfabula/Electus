@@ -27,7 +27,11 @@
         .l-nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
         .l-logo-img { width: 32px; height: 32px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .l-logo-img img { width: 28px; height: 28px; object-fit: contain; }
-        .l-logo-text { color: #fff; font-weight: 700; font-size: 1.1rem; letter-spacing: -.01em; }
+        .l-logo-text { color: #fff; font-family: 'Recursive', cursive; font-weight: 900; font-size: 1.1rem; letter-spacing: -.01em; }
+        .l-hero-brand { display: inline-flex; align-items: center; gap: 16px; background: #fff; border-radius: 20px; padding: 14px 26px; box-shadow: 0 8px 32px rgba(0,0,0,.18); margin-bottom: 28px; }
+        .l-hero-brand-icon { width: 56px; height: 56px; background: var(--p); border-radius: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+        .l-hero-brand-icon img { width: 40px; height: 40px; object-fit: contain; display: block; }
+        .l-hero-brand-name { font-family: 'Recursive', cursive; font-weight: 900; font-size: 1.9rem; color: var(--p); letter-spacing: -.02em; }
         .l-nav-actions { display: flex; align-items: center; gap: 18px; }
         .l-nav-link { color: rgba(255,255,255,.9); font-weight: 600; font-size: .9rem; text-decoration: none; }
         .l-nav-link:hover { color: #fff; }
@@ -121,10 +125,11 @@
 
 <!-- Hero -->
 <section class="l-hero">
-    <div style="margin-bottom:28px">
-        <div style="width:96px;height:96px;background:rgba(255,255,255,.15);border-radius:24px;display:inline-flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
-            <img src="/icons/electus-120.png" alt="Electus" style="width:72px;height:72px;object-fit:contain;display:block">
+    <div class="l-hero-brand">
+        <div class="l-hero-brand-icon">
+            <img src="/icons/electus-120.png" alt="Electus">
         </div>
+        <span class="l-hero-brand-name">Electus</span>
     </div>
     <div class="l-hero-badge">Sistema di votazione professionale</div>
     <h1>Vota. Gestisci.<br>Pubblica i risultati.</h1>

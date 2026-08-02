@@ -84,7 +84,7 @@ $lockSecondsRemaining = $locked ? max(0, $lockedUntil - time()) : 0;
     <div class="e-login-box">
         <div class="e-login-logo">
             <div style="width:64px;height:64px;display:inline-flex;align-items:center;justify-content:center;background:var(--e-primary);border-radius:16px;margin-bottom:4px"><img src="/icons/electus-64.png" alt="Electus" style="width:48px;height:48px;object-fit:contain;display:block"></div>
-            <h2 style="margin:12px 0 0;font-size:1.3rem;font-weight:700;color:var(--e-text);">Electus</h2>
+            <h2 class="e-wordmark" style="margin:12px 0 0;font-size:1.3rem;color:var(--e-text);">Electus</h2>
         </div>
 
         <?php if ($error): ?>

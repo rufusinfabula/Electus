@@ -1,6 +1,6 @@
 # Electus
 
-* Sistema open source di gestione votazioni ed elezioni. *
+### Sistema open source di gestione votazioni ed elezioni.
 
 ## Cos'è
 

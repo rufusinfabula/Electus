@@ -155,12 +155,12 @@ Modelli: `Single`, `Multiple`, `Borda`, `Open`, `Proportional`, `Weighted`.
 
 ### Priorità 1 — Blockers produzione
 - [x] Pagina pubblica risultati (`vote/results.php`) — redesign completato
-- [ ] Gestione utenti admin (`admin/users.php`) — crea/invita utenti, assegna ruoli per evento
-- [ ] Import CSV elettori (`admin/voters.php`) — caricamento lista pre-registrata
+- [x] Gestione utenti admin (`admin/users.php`) — crea/invita utenti, assegna ruoli per evento
+- [x] Import CSV elettori (`admin/voters.php`) — caricamento lista pre-registrata
 
 ### Priorità 2 — Importante
-- [ ] Rate limiting login (`admin/login.php`) — protezione brute-force via sessione
-- [ ] Redesign pagina pubblica evento (`vote/event.php`) — look professionale per i votanti
+- [x] Rate limiting login (`admin/login.php`) — protezione brute-force via sessione
+- [x] Redesign pagina pubblica evento (`vote/event.php`) — look professionale per i votanti
 - [x] Impostazioni espanse (`admin/settings.php`) — lingua default, test email, info sistema
 - [PENDING] **Email bulk ai votanti** — invio link di voto massivo da `admin/voters.php`.
   **In attesa deliberata**: il sistema funziona senza — l'admin può copiare il link dal round
@@ -169,10 +169,10 @@ Modelli: `Single`, `Multiple`, `Borda`, `Open`, `Proportional`, `Weighted`.
 ### Priorità 3 — Futuro
 - [PENDING] **Notifiche email al termine votazione** — stesso meccanismo della email bulk (P2.1).
   Da implementare insieme o subito dopo la P2.1, condividono la stessa infrastruttura Mailer.
-- [ ] API pubblica risultati (JSON endpoint)
-- [ ] Dashboard analytics per evento
+- [x] API pubblica risultati (`vote/api/results.php`) — endpoint JSON pubblico con CORS
+- [x] Dashboard analytics per evento (`admin/analytics.php`) — grafici partecipazione e voti
 - [x] Scheduled publish risultati (data/ora automatica)
-- [ ] Dedup automatica migliorata — logica similarità più robusta in `dedup.php`
+- [x] Dedup automatica migliorata — soundex, soglia adattiva, UI per confidenza
 - [ ] Multi-round pipeline UI — visualizzazione relazioni tra turni e stato promozione
 
 ## Note deploy

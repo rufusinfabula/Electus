@@ -151,13 +151,28 @@ Modelli: `Single`, `Multiple`, `Borda`, `Open`, `Proportional`, `Weighted`.
 - **Quill height in flex layout**: `.ql-container { height: auto !important }` + `.ql-editor { min-height: 120px }` in `assets/css/app.css`. Quill imposta `height: 100%` internamente che collassa con `min-height` sul parent flex.
 - **Rename candidato in round aperti**: pulsante matita ora sempre visibile (rimossa guard `<?php if (!$isOpen): ?>`).
 
-## Potenziali prossimi passi
+## Roadmap
 
-- **Pagina pubblica risultati** (`vote/results.php`): grafica migliorabile, supporto temi, responsive
-- **rounds-edit.php**: configurazione `round_category_map` (advancement_mode per categoria) accessibile da UI — attualmente modificabile solo via edit diretto del round
-- **Gestione elettori**: import CSV per `voter_lists`, approvazione manuale per `registration_with_approval`
-- **Dedup automatica**: `dedup.php` gestisce la coda ma la logica di suggerimento similarità è parziale
-- **Multi-round pipeline UI**: visualizzazione relazioni tra turni e stato promozione candidati
+### Priorità 1 — Blockers produzione
+- [x] Pagina pubblica risultati (`vote/results.php`) — redesign completato
+- [ ] Gestione utenti admin (`admin/users.php`) — crea/invita utenti, assegna ruoli per evento
+- [ ] Import CSV elettori (`admin/voters.php`) — caricamento lista pre-registrata
+
+### Priorità 2 — Importante
+- [ ] Rate limiting login (`admin/login.php`) — protezione brute-force via sessione
+- [ ] Redesign pagina pubblica evento (`vote/event.php`) — look professionale per i votanti
+- [x] Impostazioni espanse (`admin/settings.php`) — lingua default, test email, info sistema
+- [PENDING] **Email bulk ai votanti** — invio link di voto massivo da `admin/voters.php`.
+  **In attesa deliberata**: il sistema funziona senza — l'admin può copiare il link dal round
+  e inviarlo manualmente. Da implementare quando la base clienti lo richiederà concretamente.
+
+### Priorità 3 — Futuro
+- [ ] Notifiche email al termine votazione
+- [ ] API pubblica risultati (JSON endpoint)
+- [ ] Dashboard analytics per evento
+- [ ] Scheduled publish risultati (data/ora automatica)
+- [ ] Dedup automatica migliorata — logica similarità più robusta in `dedup.php`
+- [ ] Multi-round pipeline UI — visualizzazione relazioni tra turni e stato promozione
 
 ## Note deploy
 
@@ -165,3 +180,4 @@ Modelli: `Single`, `Multiple`, `Borda`, `Open`, `Proportional`, `Weighted`.
 - Uploads logo in `assets/uploads/logos/` (fuori repo)
 - Dopo modifiche PHP fare curl OPcache clear se debug=false
 - Branch unico: `main`, remote: `origin`
+- SSH GitHub configurata: `~/.ssh/github_electus` (ed25519), host key in `known_hosts`

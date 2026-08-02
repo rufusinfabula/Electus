@@ -29,7 +29,8 @@ session_name($sessionName);
 session_start();
 
 // Initialize i18n for admin panel
-$adminLang = $_SESSION['admin_lang'] ?? $config['app']['admin_lang'] ?? 'en';
+$adminLang = $_SESSION['admin_lang']
+    ?? \Electus\Models\Settings::get('admin_lang', $config['app']['admin_lang'] ?? 'en');
 \Electus\Core\Lang::init($adminLang);
 
 use Electus\Core\Auth;

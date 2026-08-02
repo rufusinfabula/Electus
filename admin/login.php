@@ -10,7 +10,8 @@ date_default_timezone_set($config['app']['timezone']);
 session_name($config['app']['session_name'] ?? 'electus_session');
 session_start();
 
-$lang = $_SESSION['admin_lang'] ?? $config['app']['admin_lang'] ?? 'en';
+$lang = $_SESSION['admin_lang']
+    ?? \Electus\Models\Settings::get('admin_lang', $config['app']['admin_lang'] ?? 'en');
 \Electus\Core\Lang::init($lang);
 
 use Electus\Core\Auth;

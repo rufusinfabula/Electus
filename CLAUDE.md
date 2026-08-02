@@ -167,7 +167,8 @@ Modelli: `Single`, `Multiple`, `Borda`, `Open`, `Proportional`, `Weighted`.
   e inviarlo manualmente. Da implementare quando la base clienti lo richiederà concretamente.
 
 ### Priorità 3 — Futuro
-- [ ] Notifiche email al termine votazione
+- [PENDING] **Notifiche email al termine votazione** — stesso meccanismo della email bulk (P2.1).
+  Da implementare insieme o subito dopo la P2.1, condividono la stessa infrastruttura Mailer.
 - [ ] API pubblica risultati (JSON endpoint)
 - [ ] Dashboard analytics per evento
 - [ ] Scheduled publish risultati (data/ora automatica)

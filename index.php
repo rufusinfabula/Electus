@@ -28,6 +28,9 @@
         .l-logo-img { width: 32px; height: 32px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .l-logo-img img { width: 28px; height: 28px; object-fit: contain; }
         .l-logo-text { color: #fff; font-weight: 700; font-size: 1.1rem; letter-spacing: -.01em; }
+        .l-nav-actions { display: flex; align-items: center; gap: 18px; }
+        .l-nav-link { color: rgba(255,255,255,.9); font-weight: 600; font-size: .9rem; text-decoration: none; }
+        .l-nav-link:hover { color: #fff; }
         .l-nav-cta { background: #fff; color: var(--p); border-radius: 8px; padding: 7px 18px; font-weight: 600; font-size: .9rem; text-decoration: none; transition: opacity .15s; }
         .l-nav-cta:hover { opacity: .85; }
 
@@ -94,6 +97,9 @@
             .l-hero { padding: 64px 20px 56px; }
             .l-cta { padding: 40px 24px; margin: 0 16px 56px; }
             .l-stats-inner { gap: 28px; }
+            .l-nav { padding: 0 14px; }
+            .l-nav-actions { gap: 10px; }
+            .l-nav-link { display: none; }
         }
     </style>
 </head>
@@ -107,18 +113,27 @@
         </div>
         <span class="l-logo-text">Electus</span>
     </a>
-    <a href="/admin/" class="l-nav-cta">Accedi</a>
+    <div class="l-nav-actions">
+        <a href="/richiedi-accesso.php" class="l-nav-link">Richiedi accesso</a>
+        <a href="/admin/" class="l-nav-cta">Accedi</a>
+    </div>
 </nav>
 
 <!-- Hero -->
 <section class="l-hero">
-    <div class="l-hero-badge">Sistema di votazione professionale</div>
-    <h1>Vota. Gestisci.<br>Decidi insieme.</h1>
-    <p>Electus è la piattaforma completa per elezioni, sondaggi e votazioni. Multi-turno, multi-modello, pronta per la produzione.</p>
-    <div class="l-hero-actions">
-        <a href="/admin/" class="btn-primary">Accedi all'area admin</a>
-        <a href="#funzionalita" class="btn-outline">Scopri le funzionalità</a>
+    <div style="margin-bottom:28px">
+        <div style="width:96px;height:96px;background:rgba(255,255,255,.15);border-radius:24px;display:inline-flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+            <img src="/icons/electus-120.png" alt="Electus" style="width:72px;height:72px;object-fit:contain;display:block">
+        </div>
     </div>
+    <div class="l-hero-badge">Sistema di votazione professionale</div>
+    <h1>Vota. Gestisci.<br>Pubblica i risultati.</h1>
+    <p>Electus è la piattaforma completa per elezioni, sondaggi e votazioni. Multi-turno, multi-modello, dalla registrazione degli elettori al risultato finale.</p>
+    <div class="l-hero-actions">
+        <a href="/richiedi-accesso.php" class="btn-primary">Richiedi accesso</a>
+        <a href="/admin/" class="btn-outline">Accedi all'area admin</a>
+    </div>
+    <a href="#funzionalita" style="display:inline-block;margin-top:28px;color:rgba(255,255,255,.75);font-size:.85rem;text-decoration:underline;">Scopri le funzionalità &darr;</a>
 </section>
 
 <!-- Stats bar -->
@@ -243,8 +258,11 @@
 <!-- CTA -->
 <div class="l-cta">
     <h2>Pronto a iniziare?</h2>
-    <p>Accedi all'area admin per creare il tuo primo evento di voto.</p>
-    <a href="/admin/" class="btn-primary">Accedi all'area admin</a>
+    <p>Richiedi un account per creare il tuo primo evento di voto.</p>
+    <div class="l-hero-actions" style="justify-content:center">
+        <a href="/richiedi-accesso.php" class="btn-primary">Richiedi accesso</a>
+        <a href="/admin/" class="btn-outline">Accedi all'area admin</a>
+    </div>
 </div>
 
 <!-- Footer -->

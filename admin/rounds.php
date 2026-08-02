@@ -10,6 +10,7 @@ use Electus\Core\Csrf;
 use Electus\Core\Database;
 use Electus\Core\Flash;
 use Electus\Models\Event;
+use Electus\Models\Results;
 use Electus\Models\Round;
 
 $eventId = (int) ($_GET['event_id'] ?? 0);
@@ -44,6 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'UPDATE round_category_map SET advancement_mode=?, advancement_count=? WHERE round_id=? AND category_id=?'
             )->execute([$mode, $count, $roundId, $catId]);
             Flash::success(__('advancement_updated'));
+        }
+    }
+
+    if ($action === 'promote') {
+        $fromId = (int) ($_POST['from_round_id'] ?? 0);
+        $toId   = (int) ($_POST['to_round_id']   ?? 0);
+        if ($fromId && $toId) {
+            Results::promote($fromId, $toId);
+            Flash::success(__('round_promoted_ok'));
         }
     }
 
@@ -487,10 +497,65 @@ ob_start();
 </div>
 
 <?php if (!$isLast): ?>
-<!-- Arrow between phases -->
-<div class="e-pipeline-arrow">
-    <div class="e-pipeline-arrow-line"></div>
-    <div class="e-pipeline-arrow-head">▼</div>
+<?php
+    $nextRound     = $rounds[$i + 1];
+    $advancingCats = array_filter($roundCats, fn($c) => in_array($c['advancement_mode'] ?? 'manual', ['auto','all']));
+    $hasAdvance    = count($advancingCats) > 0;
+    $canPromote    = $hasAdvance
+        && $round['status'] === 'closed'
+        && (bool) $round['votes_validated']
+        && !(bool) $round['promotion_confirmed'];
+?>
+<div class="e-pipeline-bridge">
+    <div class="e-pipeline-bridge-line"></div>
+
+    <div class="e-pipeline-bridge-card">
+        <?php if ($hasAdvance): ?>
+        <div class="e-pipeline-bridge-cats">
+            <?php foreach ($advancingCats as $ac): ?>
+            <span class="e-pipeline-bridge-pill">
+                <?= htmlspecialchars($ac['name']) ?>
+                <span class="e-pipeline-bridge-mode">
+                    <?= $ac['advancement_mode'] === 'all'
+                        ? __('advancement_all')
+                        : 'Top ' . ($ac['advancement_count'] ?? '?') ?>
+                </span>
+            </span>
+            <?php endforeach ?>
+        </div>
+        <?php endif ?>
+
+        <div class="e-pipeline-bridge-status">
+            <?php if ((bool) $round['promotion_confirmed']): ?>
+            <span class="e-badge e-badge-active" style="font-size:.7rem">
+                &#10003; <?= __('promotion_confirmed_badge') ?>
+            </span>
+            <?php elseif ($hasAdvance): ?>
+            <span class="e-badge e-badge-closed" style="font-size:.7rem">
+                <?= __('promotion_pending_badge') ?>
+            </span>
+            <?php if ($canPromote): ?>
+            <form method="post" style="display:inline;margin:0">
+                <?= Csrf::field() ?>
+                <input type="hidden" name="_action" value="promote">
+                <input type="hidden" name="from_round_id" value="<?= $round['id'] ?>">
+                <input type="hidden" name="to_round_id" value="<?= $nextRound['id'] ?>">
+                <button class="uk-button uk-button-primary uk-button-small"
+                        style="font-size:.72rem;padding:0 10px;height:26px;line-height:26px"
+                        onclick="return confirm('<?= htmlspecialchars(__('confirm_promote')) ?>')">
+                    <span uk-icon="icon:arrow-up;ratio:.7"></span>
+                    <?= __('round_promote_btn') ?>
+                </button>
+            </form>
+            <?php endif ?>
+            <?php else: ?>
+            <span style="font-size:.72rem;color:#9a94b8"><?= __('promotion_na') ?></span>
+            <?php endif ?>
+        </div>
+    </div>
+
+    <div class="e-pipeline-bridge-line"></div>
+    <div class="e-pipeline-arrow-head">&#9660;</div>
 </div>
 <?php endif ?>
 

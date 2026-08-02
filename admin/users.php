@@ -23,10 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['_action'] ?? '';
 
     if ($action === 'create') {
-        $name     = trim($_POST['name'] ?? '');
-        $email    = trim($_POST['email'] ?? '');
-        $password = (string) ($_POST['password'] ?? '');
-        $role     = $_POST['role'] ?? '';
+        $name      = trim($_POST['name'] ?? '');
+        $email     = trim($_POST['email'] ?? '');
+        $password  = (string) ($_POST['password'] ?? '');
+        $role      = $_POST['role'] ?? '';
+        $requestId = (int) ($_POST['request_id'] ?? 0);
 
         if (!in_array($role, $assignableRoles, true)) {
             $role = 'results_reader';
@@ -41,8 +42,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Flash::error(__('user_email_exists'));
             } else {
                 Auth::createUser($name, $email, $password, $role);
+                if ($requestId) {
+                    $pdo->prepare("UPDATE access_requests SET status = 'approved' WHERE id = ?")
+                        ->execute([$requestId]);
+                }
                 Flash::success(__('user_created_ok'));
             }
+        }
+    }
+
+    if ($action === 'dismiss_request') {
+        $id = (int) ($_POST['id'] ?? 0);
+        if ($id) {
+            $pdo->prepare("UPDATE access_requests SET status = 'dismissed' WHERE id = ?")->execute([$id]);
+            Flash::success(__('access_request_dismissed_ok'));
         }
     }
 
@@ -131,6 +144,10 @@ foreach ($stmt->fetchAll() as $row) {
     $permsByUser[(int) $row['user_id']][] = (int) $row['event_id'];
 }
 
+$pendingRequests = $pdo->query(
+    "SELECT * FROM access_requests WHERE status = 'pending' ORDER BY created_at DESC"
+)->fetchAll();
+
 $pageTitle  = __('users_title');
 $activeMenu = 'users';
 
@@ -138,10 +155,59 @@ ob_start();
 ?>
 <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-bottom">
     <h1 class="e-page-title uk-margin-remove"><?= __('users_title') ?></h1>
-    <a href="#modal-user-create" uk-toggle class="uk-button uk-button-primary">
+    <a href="#modal-user-create" uk-toggle class="uk-button uk-button-primary" onclick="euPrefill('','','')">
         <span uk-icon="plus-circle"></span> <?= __('user_create') ?>
     </a>
 </div>
+
+<?php if ($pendingRequests): ?>
+<div class="e-table uk-margin-bottom">
+    <h3 style="font-size:.95rem;font-weight:700;padding:16px 16px 0">
+        <?= __('access_requests_title') ?>
+        <span class="e-badge e-badge-draft" style="margin-left:6px"><?= count($pendingRequests) ?></span>
+    </h3>
+    <table class="uk-table uk-table-hover uk-table-divider uk-margin-remove">
+        <thead>
+            <tr>
+                <th><?= __('access_request_name') ?></th>
+                <th><?= __('access_request_email') ?></th>
+                <th><?= __('access_request_org') ?></th>
+                <th><?= __('access_request_date') ?></th>
+                <th style="width:180px"><?= __('actions') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($pendingRequests as $req): ?>
+            <tr>
+                <td><?= htmlspecialchars($req['name']) ?></td>
+                <td><?= htmlspecialchars($req['email']) ?></td>
+                <td><?= htmlspecialchars($req['organization'] ?: '—') ?></td>
+                <td style="color:#9a94b8;font-size:.8rem"><?= date('d/m/Y', strtotime($req['created_at'])) ?></td>
+                <td>
+                    <div class="uk-flex uk-flex-middle" style="gap:8px">
+                        <a href="#modal-user-create" uk-toggle class="uk-button uk-button-primary uk-button-small"
+                           onclick="euPrefill('<?= htmlspecialchars($req['name'], ENT_QUOTES) ?>', '<?= htmlspecialchars($req['email'], ENT_QUOTES) ?>', '<?= (int) $req['id'] ?>')">
+                            <?= __('access_request_approve') ?>
+                        </a>
+                        <form method="post" style="display:inline">
+                            <?= Csrf::field() ?>
+                            <input type="hidden" name="_action" value="dismiss_request">
+                            <input type="hidden" name="id" value="<?= $req['id'] ?>">
+                            <button type="submit" class="uk-button uk-button-default uk-button-small"><?= __('access_request_dismiss') ?></button>
+                        </form>
+                    </div>
+                    <?php if ($req['message']): ?>
+                    <div style="font-size:.78rem;color:#9a94b8;margin-top:4px;max-width:320px">
+                        <?= nl2br(htmlspecialchars($req['message'])) ?>
+                    </div>
+                    <?php endif ?>
+                </td>
+            </tr>
+            <?php endforeach ?>
+        </tbody>
+    </table>
+</div>
+<?php endif ?>
 
 <div class="e-table">
     <table class="uk-table uk-table-hover uk-table-divider uk-margin-remove">
@@ -282,13 +348,14 @@ ob_start();
         <form method="post">
             <?= Csrf::field() ?>
             <input type="hidden" name="_action" value="create">
+            <input type="hidden" name="request_id" id="f-request-id" value="">
             <div class="uk-margin">
                 <label class="uk-form-label"><?= __('user_name') ?></label>
-                <input class="uk-input" type="text" name="name" required>
+                <input class="uk-input" type="text" name="name" id="f-user-name" required>
             </div>
             <div class="uk-margin">
                 <label class="uk-form-label"><?= __('user_email') ?></label>
-                <input class="uk-input" type="email" name="email" required>
+                <input class="uk-input" type="email" name="email" id="f-user-email" required>
             </div>
             <div class="uk-margin">
                 <label class="uk-form-label"><?= __('user_new_password') ?></label>
@@ -308,6 +375,14 @@ ob_start();
         </form>
     </div>
 </div>
+
+<script>
+function euPrefill(name, email, requestId) {
+    document.getElementById('f-user-name').value = name || '';
+    document.getElementById('f-user-email').value = email || '';
+    document.getElementById('f-request-id').value = requestId || '';
+}
+</script>
 
 <?php
 $content = ob_get_clean();

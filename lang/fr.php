@@ -204,6 +204,18 @@ return [
     'user_password_too_short' => 'Le mot de passe doit contenir au moins 8 caractères.',
     'user_no_events'       => 'Aucun événement disponible.',
 
+    // Access requests
+    'access_requests_title'      => 'Demandes d\'accès',
+    'access_requests_empty'      => 'Aucune demande en attente.',
+    'access_request_name'        => 'Nom',
+    'access_request_email'       => 'Email',
+    'access_request_org'         => 'Organisation',
+    'access_request_message'     => 'Message',
+    'access_request_date'        => 'Reçue le',
+    'access_request_approve'     => 'Créer un compte',
+    'access_request_dismiss'     => 'Ignorer',
+    'access_request_dismissed_ok' => 'Demande ignorée.',
+
     // Public vote interface
     'vote_title'        => 'Voter',
     'vote_submit'       => 'Soumettre le vote',
@@ -256,7 +268,13 @@ return [
     'round_activated'        => 'Tour activé.',
     'round_closed_msg'       => 'Tour fermé.',
     'round_deleted'          => 'Tour supprimé.',
-    'advancement_updated'    => 'Avancement mis à jour.',
+    'advancement_updated'           => 'Avancement mis à jour.',
+    'round_promote_btn'            => 'Exécuter la promotion',
+    'round_promoted_ok'            => 'Candidats promus au tour suivant.',
+    'promotion_confirmed_badge'    => 'Promotion terminée',
+    'promotion_pending_badge'      => 'Promotion en attente',
+    'promotion_na'                 => 'Aucun avancement configuré',
+    'confirm_promote'              => 'Promouvoir les candidats au tour suivant ?',
     'event_settings_btn'     => 'Paramètres',
     'voting_open'            => 'VOTE OUVERT',
     'activate_to_enable'     => 'Activez l\'événement pour activer',

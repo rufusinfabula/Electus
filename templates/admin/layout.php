@@ -24,7 +24,7 @@
 <nav class="uk-navbar-container uk-navbar-transparent e-navbar" uk-navbar>
     <div class="uk-navbar-left uk-margin-left">
         <a class="uk-navbar-item uk-logo e-logo" href="/admin/">
-            <span class="e-logo-mark">E</span>
+            <span class="e-logo-mark"><img src="/icons/electus-64.png" alt="" style="width:22px;height:22px;object-fit:contain;display:block"></span>
             <span class="e-logo-text">Electus</span>
         </a>
     </div>

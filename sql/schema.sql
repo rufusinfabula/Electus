@@ -25,6 +25,17 @@ CREATE TABLE IF NOT EXISTS `user_event_permissions` (
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Public account access requests submitted from the landing page
+CREATE TABLE IF NOT EXISTS `access_requests` (
+  `id`           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `name`         VARCHAR(120)  NOT NULL,
+  `email`        VARCHAR(254)  NOT NULL,
+  `organization` VARCHAR(190)  NULL,
+  `message`      TEXT          NULL,
+  `status`       ENUM('pending','approved','dismissed') NOT NULL DEFAULT 'pending',
+  `created_at`   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Voting events
 CREATE TABLE IF NOT EXISTS `events` (
   `id`                 INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

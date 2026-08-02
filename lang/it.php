@@ -204,6 +204,18 @@ return [
     'user_password_too_short' => 'La password deve contenere almeno 8 caratteri.',
     'user_no_events'       => 'Nessun evento disponibile.',
 
+    // Access requests
+    'access_requests_title'      => 'Richieste di accesso',
+    'access_requests_empty'      => 'Nessuna richiesta in attesa.',
+    'access_request_name'        => 'Nome',
+    'access_request_email'       => 'Email',
+    'access_request_org'         => 'Organizzazione',
+    'access_request_message'     => 'Messaggio',
+    'access_request_date'        => 'Ricevuta il',
+    'access_request_approve'     => 'Crea account',
+    'access_request_dismiss'     => 'Ignora',
+    'access_request_dismissed_ok' => 'Richiesta ignorata.',
+
     // Public vote interface
     'vote_title'        => 'Vota',
     'vote_submit'       => 'Invia voto',
@@ -256,7 +268,13 @@ return [
     'round_activated'        => 'Turno attivato.',
     'round_closed_msg'       => 'Turno chiuso.',
     'round_deleted'          => 'Turno eliminato.',
-    'advancement_updated'    => 'Avanzamento aggiornato.',
+    'advancement_updated'           => 'Avanzamento aggiornato.',
+    'round_promote_btn'            => 'Esegui promozione',
+    'round_promoted_ok'            => 'Candidati promossi al turno successivo.',
+    'promotion_confirmed_badge'    => 'Promozione completata',
+    'promotion_pending_badge'      => 'Promozione da eseguire',
+    'promotion_na'                 => 'Nessun avanzamento configurato',
+    'confirm_promote'              => 'Promuovere i candidati al turno successivo?',
     'event_settings_btn'     => 'Impostazioni',
     'voting_open'            => 'VOTO APERTO',
     'activate_to_enable'     => 'Attiva la votazione per abilitare',

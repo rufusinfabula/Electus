@@ -18,7 +18,7 @@
 <header class="e-public-header">
     <div class="uk-container">
         <a href="/" class="e-public-logo">
-            <span class="e-logo-mark">E</span>
+            <span class="e-logo-mark"><img src="/icons/electus-64.png" alt="" style="width:22px;height:22px;object-fit:contain;display:block"></span>
             <span class="e-logo-text">Electus</span>
         </a>
         <!-- Language switcher -->

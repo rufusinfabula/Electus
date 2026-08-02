@@ -204,6 +204,18 @@ return [
     'user_password_too_short' => 'Password must be at least 8 characters.',
     'user_no_events'       => 'No events available.',
 
+    // Access requests
+    'access_requests_title'      => 'Access requests',
+    'access_requests_empty'      => 'No pending requests.',
+    'access_request_name'        => 'Name',
+    'access_request_email'       => 'Email',
+    'access_request_org'         => 'Organization',
+    'access_request_message'     => 'Message',
+    'access_request_date'        => 'Received on',
+    'access_request_approve'     => 'Create account',
+    'access_request_dismiss'     => 'Dismiss',
+    'access_request_dismissed_ok' => 'Request dismissed.',
+
     // Public vote interface
     'vote_title'         => 'Vote',
     'vote_submit'        => 'Submit vote',
@@ -256,7 +268,13 @@ return [
     'round_activated'        => 'Round activated.',
     'round_closed_msg'       => 'Round closed.',
     'round_deleted'          => 'Round deleted.',
-    'advancement_updated'    => 'Advancement updated.',
+    'advancement_updated'           => 'Advancement updated.',
+    'round_promote_btn'            => 'Run promotion',
+    'round_promoted_ok'            => 'Candidates promoted to the next round.',
+    'promotion_confirmed_badge'    => 'Promotion complete',
+    'promotion_pending_badge'      => 'Promotion pending',
+    'promotion_na'                 => 'No advancement configured',
+    'confirm_promote'              => 'Promote candidates to the next round?',
     'event_settings_btn'     => 'Settings',
     'voting_open'            => 'VOTING OPEN',
     'activate_to_enable'     => 'Activate the event to enable',

@@ -95,7 +95,7 @@ if (!$round || !$round['results_released']) {
 <header class="e-public-header">
     <div class="uk-container">
         <a class="e-public-logo" href="/vote/event.php?slug=<?= urlencode($slug) ?>">
-            <span class="e-logo-mark">E</span>
+            <span class="e-logo-mark"><img src="/icons/electus-64.png" alt="" style="width:22px;height:22px;object-fit:contain;display:block"></span>
             <span class="e-logo-text" style="color:#fff"><?= htmlspecialchars($event['name']) ?></span>
         </a>
     </div>
@@ -193,7 +193,7 @@ $defaultBarColor = $palette['primary'];
 <header class="e-public-header">
     <div class="uk-container">
         <a class="e-public-logo" href="/vote/event.php?slug=<?= urlencode($slug) ?>">
-            <span class="e-logo-mark">E</span>
+            <span class="e-logo-mark"><img src="/icons/electus-64.png" alt="" style="width:22px;height:22px;object-fit:contain;display:block"></span>
             <span class="e-logo-text" style="color:#fff"><?= htmlspecialchars($event['name']) ?></span>
         </a>
         <div class="e-lang-switcher">
@@ -215,8 +215,8 @@ $defaultBarColor = $palette['primary'];
                 <img src="<?= htmlspecialchars($event['public_logo_url']) ?>" alt="<?= htmlspecialchars($event['name']) ?>">
             </div>
             <?php else: ?>
-            <div class="e-results-hero-logo">
-                <span class="e-logo-mark" style="color:var(--e-primary)">E</span>
+            <div class="e-results-hero-logo" style="background:var(--e-primary);border-radius:20px;padding:12px;display:inline-flex">
+                <img src="/icons/electus-120.png" alt="Electus" style="width:64px;height:64px;object-fit:contain;display:block">
             </div>
             <?php endif ?>
             <div>

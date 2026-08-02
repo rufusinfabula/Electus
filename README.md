@@ -62,7 +62,7 @@ Copiare/creare `config/config.php` con i parametri di connessione al database, l
 mysql -u <user> -p <database> < sql/schema.sql
 ```
 
-Applicare in ordine le migrazioni presenti in `sql/` (`migration_001_...` → `migration_004_...`).
+Applicare in ordine le migrazioni presenti in `sql/` (`migration_001_...` → `migration_005_...`).
 
 ## Licenza
 

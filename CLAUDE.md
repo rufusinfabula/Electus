@@ -77,10 +77,12 @@ templates/      layout admin condiviso
 | `round_category_map` | configurazione avanzamento per categoria (round_id, category_id, advancement_mode, advancement_count, next_category_id) |
 | `voter_lists` | lista elettori registrati (event_id, email, name, token, token_used, approved, weight) |
 | `dedup_queue` | coda deduplicazione candidati open round |
+| `access_requests` | richieste pubbliche di account (name, email, organization, message, status: pending/approved/dismissed) |
 
 ## URL pubblici
 
 - **Landing page**: `/` (`index.php`) — pagina marketing/presentazione del prodotto
+- **Richiedi accesso**: `/richiedi-accesso.php` — form pubblico di richiesta account (nessun signup self-service: la richiesta va in `access_requests`, il superadmin la rivede in `admin/users.php` e crea l'account manualmente)
 - Pagina evento (registrazione/accesso): `/vote/event.php?slug={slug}`
 - Votazione: `/vote/cast.php?token={token}&round_id={round_id}`
 - Risultati pubblici: `/vote/results.php?slug={slug}&round_id={round_id}`
@@ -99,6 +101,7 @@ templates/      layout admin condiviso
 | `admin/voters.php` | gestione lista elettori |
 | `admin/dedup.php` | revisione coda deduplicazione |
 | `admin/import_forms_csv.php` | importazione CSV |
+| `admin/users.php` | gestione utenti admin (solo superadmin) — crea/disabilita/elimina utenti, assegna eventi per ruolo, **rivede le richieste di accesso pubbliche** (`access_requests`) con azione "Crea account" (prefill nome/email) o "Ignora" |
 
 ## Logica modelli di voto
 
@@ -131,6 +134,7 @@ Modelli: `Single`, `Multiple`, `Borda`, `Open`, `Proportional`, `Weighted`.
 | `admin/login.php` | pagina login standalone |
 | `vote/results.php` | due head inline (risultati non pubblicati + risultati TV) |
 | `index.php` | landing page marketing |
+| `richiedi-accesso.php` | form pubblico richiesta account |
 
 ## Stato attuale (agosto 2026)
 
@@ -145,6 +149,7 @@ Modelli: `Single`, `Multiple`, `Borda`, `Open`, `Proportional`, `Weighted`.
 - [x] Logica promozione per-categoria via `round_category_map`
 - [x] Branding aggiornato: colore `#2f6ad9`, preset `electus` come default, favicon su tutti gli head
 - [x] Landing page `index.php` — pagina pubblica marketing del prodotto
+- [x] Richiesta accesso pubblica (`richiedi-accesso.php` + tabella `access_requests`) — nessun signup self-service, la richiesta va rivista dal superadmin in `admin/users.php` che crea l'account (honeypot anti-spam, notifica email al superadmin)
 
 ### Fix noti
 
@@ -173,7 +178,7 @@ Modelli: `Single`, `Multiple`, `Borda`, `Open`, `Proportional`, `Weighted`.
 - [x] Dashboard analytics per evento (`admin/analytics.php`) — grafici partecipazione e voti
 - [x] Scheduled publish risultati (data/ora automatica)
 - [x] Dedup automatica migliorata — soundex, soglia adattiva, UI per confidenza
-- [ ] Multi-round pipeline UI — visualizzazione relazioni tra turni e stato promozione
+- [x] Multi-round pipeline UI — bridge visivo tra turni con pills avanzamento, badge stato promozione e pulsante "Esegui promozione"
 
 ## Note deploy
 

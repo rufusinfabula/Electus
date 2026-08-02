@@ -9,6 +9,7 @@
     <link rel="icon" type="image/png" sizes="64x64" href="/icons/electus-64.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/electus-180.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3/dist/css/uikit.min.css">
+    <link rel="stylesheet" href="/assets/css/app.css">
     <style>
         :root {
             --p: #2f6ad9;
@@ -18,6 +19,7 @@
             --text: #0f172a;
             --muted: #64748b;
             --radius: 14px;
+            --e-primary: #2f6ad9; /* alias per i componenti e-footer-* */
         }
         * { box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--text); background: #fff; margin: 0; }

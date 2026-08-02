@@ -75,17 +75,82 @@ $lockSecondsRemaining = $locked ? max(0, $lockedUntil - time()) : 0;
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3/dist/css/uikit.min.css">
     <link rel="stylesheet" href="/assets/css/app.css">
     <style>
-        body { background: var(--e-bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .e-login-box { background: #fff; border-radius: 16px; padding: 40px 48px; width: 100%; max-width: 420px; box-shadow: 0 4px 24px rgba(47,106,217,.1); border: 1px solid #dce8fb; }
-        .e-login-logo { text-align: center; margin-bottom: 32px; }
+        body {
+            background: var(--e-bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .e-login-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 16px;
+        }
+        .e-login-box {
+            background: #fff;
+            border-radius: 20px;
+            padding: 44px 48px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 8px 40px rgba(47,106,217,.13);
+            border: 1px solid #dce8fb;
+        }
+        .e-login-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+        .e-login-brand-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--e-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .e-login-brand-icon img {
+            width: 34px;
+            height: 34px;
+            object-fit: contain;
+            display: block;
+        }
+        .e-login-brand-name {
+            font-family: 'Recursive', cursive;
+            font-weight: 900;
+            font-size: 1.7rem;
+            color: var(--e-text);
+            letter-spacing: -.02em;
+        }
+        .e-login-subtitle {
+            text-align: center;
+            font-size: .82rem;
+            color: #8a9ab8;
+            margin: 0 0 32px;
+            letter-spacing: .02em;
+            text-transform: uppercase;
+        }
+        @media (max-width: 480px) {
+            .e-login-box { padding: 32px 24px; }
+        }
     </style>
 </head>
 <body>
+<div class="e-login-wrap">
     <div class="e-login-box">
-        <div class="e-login-logo">
-            <div style="width:64px;height:64px;display:inline-flex;align-items:center;justify-content:center;background:var(--e-primary);border-radius:16px;margin-bottom:4px"><img src="/icons/electus-64.png" alt="Electus" style="width:48px;height:48px;object-fit:contain;display:block"></div>
-            <h2 class="e-wordmark" style="margin:12px 0 0;font-size:1.3rem;color:var(--e-text);">Electus</h2>
+        <div class="e-login-brand">
+            <div class="e-login-brand-icon">
+                <img src="/icons/electus-64.png" alt="Electus">
+            </div>
+            <span class="e-login-brand-name">Electus</span>
         </div>
+        <p class="e-login-subtitle"><?= __('login_title') ?></p>
 
         <?php if ($error): ?>
         <div class="uk-alert-danger" uk-alert>
@@ -122,9 +187,10 @@ $lockSecondsRemaining = $locked ? max(0, $lockedUntil - time()) : 0;
         </div>
         <?php endif ?>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit-icons.min.js"></script>
-    <?php require ROOT . '/templates/_footer.php' ?>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit-icons.min.js"></script>
+<?php require ROOT . '/templates/_footer.php' ?>
 </body>
 </html>

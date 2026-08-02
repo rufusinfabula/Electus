@@ -30,10 +30,10 @@
         .l-logo-img { width: 32px; height: 32px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .l-logo-img img { width: 28px; height: 28px; object-fit: contain; }
         .l-logo-text { color: #fff; font-family: 'Recursive', cursive; font-weight: 900; font-size: 1.1rem; letter-spacing: -.01em; }
-        .l-hero-brand { display: inline-flex; align-items: center; gap: 16px; background: #fff; border-radius: 20px; padding: 14px 26px; box-shadow: 0 8px 32px rgba(0,0,0,.18); margin-bottom: 28px; }
-        .l-hero-brand-icon { width: 56px; height: 56px; background: var(--p); border-radius: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
-        .l-hero-brand-icon img { width: 40px; height: 40px; object-fit: contain; display: block; }
-        .l-hero-brand-name { font-family: 'Recursive', cursive; font-weight: 900; font-size: 1.9rem; color: var(--p); letter-spacing: -.02em; }
+        .l-hero-brand { display: inline-flex; align-items: center; gap: 22px; background: #fff; border-radius: 26px; padding: 22px 40px; box-shadow: 0 10px 40px rgba(0,0,0,.22); margin-bottom: 32px; }
+        .l-hero-brand-icon { width: 88px; height: 88px; background: var(--p); border-radius: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+        .l-hero-brand-icon img { width: 64px; height: 64px; object-fit: contain; display: block; }
+        .l-hero-brand-name { font-family: 'Recursive', cursive; font-weight: 900; font-size: 4rem; line-height: 88px; color: var(--p); letter-spacing: -.03em; }
         .l-nav-actions { display: flex; align-items: center; gap: 18px; }
         .l-nav-link { color: rgba(255,255,255,.9); font-weight: 600; font-size: .9rem; text-decoration: none; }
         .l-nav-link:hover { color: #fff; }
@@ -133,7 +133,7 @@
         </div>
         <span class="l-hero-brand-name">Electus</span>
     </div>
-    <div class="l-hero-badge">Sistema di votazione professionale</div>
+    <div class="l-hero-badge">Sistema di votazione<br>professionale</div>
     <h1>Vota. Gestisci.<br>Pubblica i risultati.</h1>
     <p>Electus è la piattaforma completa per elezioni, sondaggi e votazioni. Multi-turno, multi-modello, dalla registrazione degli elettori al risultato finale.</p>
     <div class="l-hero-actions">

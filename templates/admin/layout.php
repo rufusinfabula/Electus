@@ -120,6 +120,11 @@
                             <span uk-icon="icon:tag;ratio:.8"></span> <?= $__catTermP ?>
                         </a>
                     </li>
+                    <li class="<?= $__activeMenu === 'analytics' ? 'uk-active' : '' ?>">
+                        <a href="/admin/analytics.php?event_id=<?= $currentEventId ?>">
+                            <span uk-icon="icon:bolt;ratio:.8"></span> <?= __('nav_analytics') ?>
+                        </a>
+                    </li>
                     <li class="<?= $__activeMenu === 'voters' ? 'uk-active' : '' ?>">
                         <a href="/admin/voters.php?event_id=<?= $currentEventId ?>">
                             <span uk-icon="icon:users;ratio:.8"></span> <?= __('voters_title') ?>

@@ -34,6 +34,7 @@ return [
     'nav_events'     => 'Voting sessions',
     'nav_users'      => 'Users',
     'nav_settings'   => 'Settings',
+    'nav_analytics'  => 'Analytics',
 
     // Dashboard
     'dashboard_title'       => 'Dashboard',
@@ -416,4 +417,13 @@ return [
     'vote_step_vote'             => '③ Vote',
     'vote_step_confirm'          => '④ Confirm',
     'view_results'               => 'View results',
+
+    // Analytics
+    'analytics_title'             => 'Analytics',
+    'analytics_participation'     => 'Participation',
+    'analytics_participation_rate'=> 'Participation rate',
+    'analytics_avg_time_to_vote'  => 'Average time to vote',
+    'analytics_votes_over_time'   => 'Votes over time',
+    'analytics_top_performers'    => 'Top performers',
+    'analytics_no_data'           => 'No data available.',
 ];

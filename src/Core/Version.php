@@ -6,5 +6,5 @@ namespace Electus\Core;
 
 class Version
 {
-    public const CURRENT = '0.6.0';
+    public const CURRENT = '0.6.1';
 }

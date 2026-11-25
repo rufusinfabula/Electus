@@ -94,6 +94,19 @@ if ($roundId) {
     }
 }
 
+// Registrations-over-time series (voter_lists.created_at), always per day, cumulative
+$regSeries = [];
+$stmt = $pdo->prepare(
+    "SELECT DATE_FORMAT(created_at, '%Y-%m-%d') AS slot, COUNT(*) AS cnt
+     FROM voter_lists WHERE event_id = ? GROUP BY slot ORDER BY slot"
+);
+$stmt->execute([$eventId]);
+$cumulative = 0;
+foreach ($stmt->fetchAll() as $r) {
+    $cumulative += (int) $r['cnt'];
+    $regSeries[] = ['slot' => $r['slot'], 'cnt' => $cumulative];
+}
+
 // Distribution by category — reuse the same computed snapshot as results.php
 $resultsByCategory = $roundId ? Results::forRound($roundId) : [];
 
@@ -206,6 +219,45 @@ ob_start();
                     data: <?= json_encode(array_column($timeSeries, 'cnt')) ?>,
                     borderColor: '#2f6ad9',
                     backgroundColor: 'rgba(47,106,217,.1)',
+                    fill: true,
+                    tension: .3,
+                    pointRadius: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                    y: { beginAtZero: true, grid: { color: '#f0eeff' } }
+                }
+            }
+        });
+    })();
+    </script>
+    <?php endif ?>
+</div>
+
+<!-- Registrations over time -->
+<div class="e-card uk-margin-bottom" style="padding:16px">
+    <h3 style="font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--e-accent);margin:0 0 12px"><?= __('analytics_registrations_over_time') ?></h3>
+    <?php if (empty($regSeries)): ?>
+    <p style="color:#9a94b8;text-align:center;padding:30px 0;margin:0"><?= __('analytics_no_data') ?></p>
+    <?php else: ?>
+    <canvas id="chart-registrations-over-time" style="max-height:300px"></canvas>
+    <script>
+    (function(){
+        var ctx = document.getElementById('chart-registrations-over-time');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: <?= json_encode(array_column($regSeries, 'slot')) ?>,
+                datasets: [{
+                    label: '<?= addslashes(__('analytics_registrations_over_time')) ?>',
+                    data: <?= json_encode(array_column($regSeries, 'cnt')) ?>,
+                    borderColor: '#60a5fa',
+                    backgroundColor: 'rgba(96,165,250,.12)',
                     fill: true,
                     tension: .3,
                     pointRadius: 2

@@ -441,7 +441,7 @@ return [
     'public_info_box_label'      => 'Zone d\'information',
     'public_logo_url_label'      => 'URL logo / image',
     'public_privacy_url_label'   => 'URL politique de confidentialité',
-    'gdpr_notice'                => 'Vos données (email) sont utilisées uniquement pour vous identifier et éviter les doubles votes. Votre vote est anonyme.',
+    'gdpr_notice'                => 'L\'adresse e-mail est utilisée uniquement pour éviter les doubles votes. Le vote est anonyme et le système n\'associe aucune adresse e-mail aux votes exprimés.',
     'privacy_policy'             => 'Politique de confidentialité',
     'voting_closes_at'           => 'Le vote se clôt le',
     'vote_confirm_submit'        => 'Vous êtes sur le point de soumettre votre vote. Cela ne pourra pas être modifié. Confirmez ?',
@@ -459,6 +459,7 @@ return [
     'analytics_participation_rate'=> 'Taux de participation',
     'analytics_avg_time_to_vote'  => 'Temps moyen jusqu\'au vote',
     'analytics_votes_over_time'   => 'Évolution des votes',
+    'analytics_registrations_over_time' => 'Inscriptions au fil du temps',
     'analytics_top_performers'    => 'Meilleurs candidats',
     'analytics_no_data'           => 'Aucune donnée disponible.',
 ];

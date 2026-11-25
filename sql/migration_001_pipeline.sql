@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `round_category_map` (
   `category_id`       INT UNSIGNED NOT NULL,
   `advancement_count` TINYINT UNSIGNED NULL COMMENT 'NULL=all, 0=none, N=top-N',
   `advancement_mode`  ENUM('auto','manual','all','none') NOT NULL DEFAULT 'manual',
-  `next_category_id`  INT UNSIGNED NULL COMMENT 'NULL=same cat; set to merge into another cat in next round',
+  `next_category_id`  INT UNSIGNED NULL COMMENT 'NULL=same cat, otherwise merge into another cat in next round',
   PRIMARY KEY (`round_id`, `category_id`),
   FOREIGN KEY (`round_id`)          REFERENCES `event_rounds`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`category_id`)       REFERENCES `categories`(`id`) ON DELETE CASCADE,

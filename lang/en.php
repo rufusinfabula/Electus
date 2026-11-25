@@ -441,7 +441,7 @@ return [
     'public_info_box_label'      => 'Info box',
     'public_logo_url_label'      => 'Logo / image URL',
     'public_privacy_url_label'   => 'Privacy policy URL',
-    'gdpr_notice'                => 'Your data (email) is used only to identify you and prevent duplicate votes. Your vote is anonymous.',
+    'gdpr_notice'                => 'Your email address is used only to prevent duplicate votes. Voting is anonymous and the system does not link any email address to the votes cast.',
     'privacy_policy'             => 'Privacy policy',
     'voting_closes_at'           => 'Voting closes on',
     'vote_confirm_submit'        => 'You are about to submit your vote. This cannot be changed. Confirm?',
@@ -459,6 +459,7 @@ return [
     'analytics_participation_rate'=> 'Participation rate',
     'analytics_avg_time_to_vote'  => 'Average time to vote',
     'analytics_votes_over_time'   => 'Votes over time',
+    'analytics_registrations_over_time' => 'Registrations over time',
     'analytics_top_performers'    => 'Top performers',
     'analytics_no_data'           => 'No data available.',
 ];

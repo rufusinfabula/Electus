@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `round_category_map` (
   `category_id`       INT UNSIGNED NOT NULL,
   `advancement_count` TINYINT UNSIGNED NULL COMMENT 'NULL=all, 0=none, N=top-N',
   `advancement_mode`  ENUM('auto','manual','all','none') NOT NULL DEFAULT 'manual',
-  `next_category_id`  INT UNSIGNED NULL COMMENT 'NULL=same cat; set to merge into another cat in next round',
+  `next_category_id`  INT UNSIGNED NULL COMMENT 'NULL=same cat, otherwise merge into another cat in next round',
   PRIMARY KEY (`round_id`, `category_id`),
   FOREIGN KEY (`round_id`)         REFERENCES `event_rounds`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`category_id`)      REFERENCES `categories`(`id`) ON DELETE CASCADE,
@@ -213,5 +213,14 @@ CREATE TABLE IF NOT EXISTS `results` (
   FOREIGN KEY (`candidate_id`) REFERENCES `candidates`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`category_id`)  REFERENCES `categories`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Global application settings (key/value)
+CREATE TABLE IF NOT EXISTS `app_settings` (
+  `key`        VARCHAR(100) PRIMARY KEY,
+  `value`      TEXT NULL,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `app_settings` (`key`, `value`) VALUES ('admin_theme', 'electus');
 
 SET foreign_key_checks = 1;

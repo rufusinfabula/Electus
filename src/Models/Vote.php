@@ -9,6 +9,14 @@ use Electus\Core\Database;
 class Vote
 {
     /**
+     * Precisione temporale di voted_at e token_used_at, in secondi.
+     * Entrambi vengono arrotondati per difetto allo stesso blocco (15 min): le statistiche
+     * orarie/giornaliere restano esatte, ma dentro un blocco non è possibile stabilire
+     * quale elettore abbia espresso quale voto.
+     */
+    public const TIME_BUCKET_SECONDS = 900;
+
+    /**
      * Two-phase cast: atomically marks token as used and saves votes.
      * If no token, just saves votes anonymously.
      *
@@ -23,10 +31,13 @@ class Vote
         $pdo->beginTransaction();
 
         try {
+            // Un solo blocco temporale per token e voti, calcolato una volta sola
+            $slot   = (string) $pdo->query('SELECT ' . self::bucketSql())->fetchColumn();
             $weight = 1.0;
 
             if ($token !== null) {
-                // Phase 1: verify and consume token
+                // Phase 1: verify and consume token.
+                // token_used_at è arrotondato allo stesso blocco di votes.voted_at (vedi TIME_BUCKET_SECONDS).
                 $stmt = $pdo->prepare(
                     'SELECT * FROM voter_lists WHERE token = ? AND event_id = ? AND approved = 1 LIMIT 1'
                 );
@@ -41,9 +52,9 @@ class Vote
                 }
 
                 $stmt = $pdo->prepare(
-                    'UPDATE voter_lists SET token_used = 1, token_used_at = NOW() WHERE id = ?'
+                    'UPDATE voter_lists SET token_used = 1, token_used_at = ? WHERE id = ?'
                 );
-                $stmt->execute([$voter['id']]);
+                $stmt->execute([$slot, $voter['id']]);
 
                 $weight = (float) $voter['weight'];
             }
@@ -52,8 +63,8 @@ class Vote
             $anonymousId = bin2hex(random_bytes(32));
 
             $stmt = $pdo->prepare(
-                'INSERT INTO votes (round_id, candidate_id, category_id, value, anonymous_id)
-                 VALUES (?, ?, ?, ?, ?)'
+                'INSERT INTO votes (round_id, candidate_id, category_id, value, anonymous_id, voted_at)
+                 VALUES (?, ?, ?, ?, ?, ?)'
             );
 
             foreach ($votes as $v) {
@@ -63,6 +74,7 @@ class Vote
                     $v['category_id'],
                     round($v['value'] * $weight, 4),
                     $anonymousId,
+                    $slot,
                 ]);
             }
 
@@ -71,6 +83,13 @@ class Vote
             $pdo->rollBack();
             throw $e;
         }
+    }
+
+    /** Espressione SQL: istante corrente arrotondato per difetto al blocco (stesso fuso del database). */
+    private static function bucketSql(): string
+    {
+        $n = (int) self::TIME_BUCKET_SECONDS;
+        return "FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(NOW()) / {$n}) * {$n})";
     }
 
     public static function countForRound(int $roundId): int

@@ -9,6 +9,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/electus-180.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3/dist/css/uikit.min.css">
     <link rel="stylesheet" href="/assets/css/app.css">
+    <!-- Chart.js in <head>: gli script dei grafici sono inline nel contenuto, prima del footer -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
     <?php
     $__adminTheme = \Electus\Models\Settings::get('admin_theme', \Electus\Core\Theme::DEFAULT_PRESET);
     $__adminPal   = \Electus\Core\Theme::PALETTES[$__adminTheme] ?? \Electus\Core\Theme::PALETTES[\Electus\Core\Theme::DEFAULT_PRESET];
@@ -206,7 +208,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/uikit@3/dist/js/uikit-icons.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script src="/assets/js/admin.js"></script>
 <?php if (!empty($useQuill)): ?>
 <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>

@@ -211,7 +211,7 @@ Ricavati dalla lettura del codice, in ordine di importanza.
 6. **Header di sicurezza HTTP** e flag dei cookie di sessione.
 7. **Messaggi in inglese hard-coded** nei modelli di voto («Select up to…», «Duplicate point values…»): non passano da `__()`.
 8. **Nessun test automatico**: mancano test per `Results::compute/promote`, i modelli di voto e la similarità della dedup.
-9. **Nessuna integrazione continua** (lint `php -l`, test) e nessun file `LICENSE`.
+9. **Nessuna integrazione continua** (lint `php -l`, test).
 10. **`cast.php`**: la prima query sul token fa `SELECT vl.*, e.*`, con collisione di nomi di colonna (`id`, `name`, `created_at`). Il risultato viene poi rifatto con `VoterList::findByToken`: la prima query è superflua.
 11. **Email bulk e notifiche di fine votazione**: rimandate deliberatamente (roadmap in `CLAUDE.md`).
 

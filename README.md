@@ -4,7 +4,7 @@
 
 🌐 Demo / sito: <https://electus.spazioumano.org>
 
-![PHP](https://img.shields.io/badge/PHP-%E2%89%A58.3-777bb4) ![MySQL](https://img.shields.io/badge/MySQL%2FMariaDB-required-00758f) ![Version](https://img.shields.io/badge/version-0.6.1-2f6ad9)
+![PHP](https://img.shields.io/badge/PHP-%E2%89%A58.3-777bb4) ![MySQL](https://img.shields.io/badge/MySQL%2FMariaDB-required-00758f) ![Version](https://img.shields.io/badge/version-0.6.1-2f6ad9) ![License](https://img.shields.io/badge/license-AGPL--3.0-blue)
 
 ## Funzionalità
 
@@ -103,4 +103,7 @@ Le pull request sono benvenute. Usa `declare(strict_types=1)`, PDO con prepared 
 
 ## Licenza
 
-Il codice è pubblico, ma il repository **non contiene ancora un file `LICENSE`**: senza una licenza esplicita, per legge nessuno ha il diritto di riusarlo. Scegli una licenza (ad esempio MIT, Apache-2.0 o AGPL-3.0) e aggiungi il file.
+Electus — sistema open source per votazioni ed elezioni.
+Copyright © 2026 Fabio Ranfi.
+
+Distribuito secondo i termini della **GNU Affero General Public License v3.0** (o, a scelta di chi lo usa, una versione successiva) — testo completo in [LICENSE](LICENSE). In breve: si può usare, modificare e ridistribuire liberamente; chi fa girare una versione modificata come servizio raggiungibile in rete deve mettere a disposizione di chi lo usa il codice sorgente di quella versione, comprese le modifiche.
